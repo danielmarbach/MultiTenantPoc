@@ -12,6 +12,8 @@ Single ASP.NET Core project hosting multiple NServiceBus endpoints in one proces
 - Minimal API sending via the tenant-keyed `IMessageSession`.
 - Console logging with scopes and endpoint-based colors.
 - EF Core auto-creates each tenant database and partition schemas on startup.
+- OpenAPI document in development at `/openapi/v1.json`.
+- Swagger UI in development at `/swagger`.
 
 ## Configuration
 
@@ -28,6 +30,8 @@ docker run --name sql-edge -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=Your_passwor
 ```bash
 dotnet run --project MultiTenantPoc/MultiTenantPoc.csproj
 ```
+
+Then open `http://localhost:5122/swagger`.
 
 ## Test endpoints
 

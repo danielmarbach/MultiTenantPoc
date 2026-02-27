@@ -4,6 +4,7 @@ using MultiTenantPoc;
 using NServiceBus;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddOpenApi();
 
 builder.Services
     .AddOptions<PocOptions>()
@@ -55,6 +56,15 @@ foreach (var tenant in pocOptions.Tenants)
 }
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "MultiTenantPoc v1");
+    });
+}
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
