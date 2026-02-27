@@ -4,7 +4,7 @@ namespace MultiTenantPoc;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddMultiTenantOptions(this IServiceCollection services)
+    public static IServiceCollection AddMultiTenantOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddOptions<PocOptions>()
@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
             .ValidateOnStart();
 
         services.AddSingleton<IValidateOptions<PocOptions>, PocOptionsValidator>();
+        services.Configure<HostOptions>(configuration.GetSection("HostOptions"));
 
         return services;
     }

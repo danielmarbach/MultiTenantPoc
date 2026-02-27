@@ -3,7 +3,7 @@ using MultiTenantPoc;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 
-builder.Services.AddMultiTenantOptions();
+builder.Services.AddMultiTenantOptions(builder.Configuration);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddProvider(new EndpointColorConsoleLoggerProvider());
