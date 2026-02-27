@@ -47,7 +47,7 @@ public sealed class EndpointCatalog
     public IReadOnlyList<string> GetPartitionSchemas(string tenantId)
         => partitionEndpoints[tenantId].Select(p => p.Schema).ToArray();
 
-    public bool TryResolvePartitionEndpoint(string tenantId, Guid businessId, out string endpoint, out int partition)
+    public bool TryResolvePartitionEndpoint(string tenantId, string businessId, out string endpoint, out int partition)
     {
         endpoint = string.Empty;
         partition = 0;
@@ -73,10 +73,10 @@ public sealed class EndpointCatalog
         })
         .ToArray();
 
-    static int ResolvePartition(Guid businessId, int partitionCount)
+    static int ResolvePartition(string businessId, int partitionCount)
     {
-        var firstByte = businessId.ToByteArray()[0];
-        return firstByte % partitionCount;
+        var hash = (uint)StringComparer.OrdinalIgnoreCase.GetHashCode(businessId);
+        return (int)(hash % (uint)partitionCount);
     }
 
     static string Normalize(string tenantId)

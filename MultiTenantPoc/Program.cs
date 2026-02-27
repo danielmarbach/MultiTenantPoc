@@ -83,7 +83,7 @@ app.MapGet("/tenants", (EndpointCatalog catalog) => Results.Ok(catalog.Describe(
 var tenantApi = app.MapGroup("/api/{tenantId}")
     .AddEndpointFilter<TenantMessageSessionFilter>();
 
-tenantApi.MapGet("/partition/{businessId:guid}", (string tenantId, Guid businessId, EndpointCatalog catalog) =>
+tenantApi.MapGet("/partition/{businessId}", (string tenantId, string businessId, EndpointCatalog catalog) =>
 {
     catalog.TryResolvePartitionEndpoint(tenantId, businessId, out var endpoint, out var partition);
 
@@ -94,7 +94,9 @@ tenantApi.MapGet("/partition/{businessId:guid}", (string tenantId, Guid business
         partition,
         endpoint
     });
-});
+})
+.WithSummary("Resolve business ID partition")
+.WithDescription("Returns partition and endpoint for tenantId + businessId.");
 
 tenantApi.MapPost("/bulk", async (
     BulkIngestionRequest request,
@@ -129,7 +131,8 @@ tenantApi.MapPost("/bulk", async (
         businessId = request.BusinessId,
         mode = "local"
     });
-});
+})
+.WithSummary("Send bulk ingestion command");
 
 tenantApi.MapPost("/business", async (
     PartitionedCommandRequest request,
@@ -172,6 +175,7 @@ tenantApi.MapPost("/business", async (
         mode = "local"
     });
 })
+.WithSummary("Send partitioned business command")
 .AddEndpointFilter<PartitionMessageSessionFilter>();
 
 app.Run();

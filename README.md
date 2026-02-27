@@ -40,7 +40,7 @@ Bulk to tenant main endpoint:
 ```bash
 curl -X POST http://localhost:5122/api/tenant-a/bulk \
   -H "Content-Type: application/json" \
-  -d '{"businessId":"11111111-1111-1111-1111-111111111111","payload":"bulk-import"}'
+  -d '{"businessId":"import-batch-042","payload":"bulk-import"}'
 ```
 
 Partitioned command to tenant partition endpoint:
@@ -48,11 +48,11 @@ Partitioned command to tenant partition endpoint:
 ```bash
 curl -X POST http://localhost:5122/api/tenant-a/business \
   -H "Content-Type: application/json" \
-  -d '{"businessId":"22222222-2222-2222-2222-222222222222","payload":"process-order"}'
+  -d '{"businessId":"invoice-9917","payload":"process-order"}'
 ```
 
 Check which partition/endpoint a business id maps to:
 
 ```bash
-curl http://localhost:5122/api/tenant-a/partition/22222222-2222-2222-2222-222222222222
+curl http://localhost:5122/api/tenant-a/partition/order-2026-00042
 ```
