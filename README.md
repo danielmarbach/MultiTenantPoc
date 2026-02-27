@@ -9,6 +9,7 @@ Single ASP.NET Core project hosting multiple NServiceBus endpoints in one proces
 - `AddNServiceBusEndpoint` multi-host setup with endpoint identifiers.
 - Minimal API sending via the tenant-keyed `IMessageSession`.
 - Console logging with scopes and endpoint-based colors.
+- EF Core database auto-creation on startup via `EnsureCreatedAsync()`.
 
 ## Configuration
 
@@ -42,4 +43,10 @@ Partitioned command to tenant partition endpoint:
 curl -X POST http://localhost:5122/api/tenant-a/business \
   -H "Content-Type: application/json" \
   -d '{"businessId":"22222222-2222-2222-2222-222222222222","payload":"process-order"}'
+```
+
+Check which partition/endpoint a business id maps to:
+
+```bash
+curl http://localhost:5122/api/tenant-a/partition/22222222-2222-2222-2222-222222222222
 ```

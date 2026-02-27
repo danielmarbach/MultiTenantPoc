@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MultiTenantPoc;
 using NServiceBus;
@@ -18,6 +19,7 @@ var pocOptions = builder.Configuration.GetSection(PocOptions.SectionName).Get<Po
 
 var endpointCatalog = new EndpointCatalog(pocOptions);
 builder.Services.AddSingleton(endpointCatalog);
+builder.Services.AddDbContext<PocDbContext>(options => options.UseSqlServer(pocOptions.SqlTransport.ConnectionString));
 
 foreach (var tenant in pocOptions.Tenants)
 {
@@ -26,6 +28,7 @@ foreach (var tenant in pocOptions.Tenants)
         endpointName: tenantMainEndpointName,
         connectionString: pocOptions.SqlTransport.ConnectionString,
         defaultSchema: pocOptions.SqlTransport.DefaultSchema,
+        transactionMode: pocOptions.SqlTransport.TransactionMode,
         processingConcurrency: Math.Max(1, tenant.MainEndpointConcurrency),
         addHandlers: cfg => cfg.AddHandler<BulkIngestionCommandHandler>());
 
@@ -37,6 +40,7 @@ foreach (var tenant in pocOptions.Tenants)
             endpointName: partitionEndpointName,
             connectionString: pocOptions.SqlTransport.ConnectionString,
             defaultSchema: pocOptions.SqlTransport.DefaultSchema,
+            transactionMode: pocOptions.SqlTransport.TransactionMode,
             processingConcurrency: 1,
             addHandlers: cfg => cfg.AddHandler<PartitionedBusinessCommandHandler>());
 
@@ -46,6 +50,25 @@ foreach (var tenant in pocOptions.Tenants)
 
 var app = builder.Build();
 
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<PocDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+
+    if (!await dbContext.Tenants.AnyAsync())
+    {
+        var tenants = pocOptions.Tenants
+            .Select(t => new TenantRecord
+            {
+                TenantId = t.TenantId,
+                CreatedUtc = DateTime.UtcNow
+            });
+
+        await dbContext.Tenants.AddRangeAsync(tenants);
+        await dbContext.SaveChangesAsync();
+    }
+}
+
 app.MapGet("/", () => Results.Ok(new
 {
     name = "NServiceBus multi-tenant PoC",
@@ -53,6 +76,22 @@ app.MapGet("/", () => Results.Ok(new
 }));
 
 app.MapGet("/tenants", (EndpointCatalog catalog) => Results.Ok(catalog.Describe()));
+
+app.MapGet("/api/{tenantId}/partition/{businessId:guid}", (string tenantId, Guid businessId, EndpointCatalog catalog) =>
+{
+    if (!catalog.TryResolvePartitionEndpoint(tenantId, businessId, out var endpoint, out var partition))
+    {
+        return Results.NotFound(new { error = $"Unknown tenant '{tenantId}'." });
+    }
+
+    return Results.Ok(new
+    {
+        tenantId,
+        businessId,
+        partition,
+        endpoint
+    });
+});
 
 app.MapPost("/api/{tenantId}/bulk", async (
     string tenantId,

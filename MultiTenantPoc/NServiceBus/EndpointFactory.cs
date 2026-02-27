@@ -8,6 +8,7 @@ public static class EndpointFactory
         string endpointName,
         string connectionString,
         string defaultSchema,
+        string transactionMode,
         int processingConcurrency,
         Action<EndpointConfiguration> addHandlers)
     {
@@ -24,7 +25,18 @@ public static class EndpointFactory
         var transport = endpointConfiguration.UseTransport<SqlServerTransport>();
         transport.ConnectionString(connectionString);
         transport.DefaultSchema(defaultSchema);
+        transport.Transactions(ParseMode(transactionMode));
 
         return endpointConfiguration;
+    }
+
+    static TransportTransactionMode ParseMode(string mode)
+    {
+        if (Enum.TryParse<TransportTransactionMode>(mode, true, out var parsed))
+        {
+            return parsed;
+        }
+
+        throw new InvalidOperationException($"Unsupported transport transaction mode '{mode}'.");
     }
 }

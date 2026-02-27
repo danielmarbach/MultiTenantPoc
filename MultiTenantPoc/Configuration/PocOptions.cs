@@ -16,6 +16,7 @@ public sealed class SqlTransportOptions
 {
     public string ConnectionString { get; init; } = string.Empty;
     public string DefaultSchema { get; init; } = "dbo";
+    public string TransactionMode { get; init; } = "SendsAtomicWithReceive";
 }
 
 public sealed class TenantOptions
@@ -43,6 +44,12 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
         if (string.IsNullOrWhiteSpace(options.SqlTransport.ConnectionString))
         {
             errors.Add("Poc:SqlTransport:ConnectionString is required.");
+        }
+
+        var allowedModes = new[] { "None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope" };
+        if (!allowedModes.Contains(options.SqlTransport.TransactionMode, StringComparer.OrdinalIgnoreCase))
+        {
+            errors.Add($"Poc:SqlTransport:TransactionMode '{options.SqlTransport.TransactionMode}' is invalid.");
         }
 
         if (options.Tenants.Count == 0)
