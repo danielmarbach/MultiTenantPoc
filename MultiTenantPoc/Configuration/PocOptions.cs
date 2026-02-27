@@ -15,13 +15,16 @@ public sealed class PocOptions
 public sealed class SqlTransportOptions
 {
     public string ConnectionString { get; init; } = string.Empty;
-    public string DefaultSchema { get; init; } = "dbo";
+    public string MainSchema { get; init; } = "dbo";
+    public string PartitionSchemaPrefix { get; init; } = "p";
+    public string DatabasePrefix { get; init; } = "NsbPoc_";
     public string TransactionMode { get; init; } = "SendsAtomicWithReceive";
 }
 
 public sealed class TenantOptions
 {
     public string TenantId { get; init; } = string.Empty;
+    public string? DatabaseName { get; init; }
     public int MainEndpointConcurrency { get; init; } = 2;
 }
 
@@ -44,6 +47,21 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
         if (string.IsNullOrWhiteSpace(options.SqlTransport.ConnectionString))
         {
             errors.Add("Poc:SqlTransport:ConnectionString is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.MainSchema))
+        {
+            errors.Add("Poc:SqlTransport:MainSchema is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.PartitionSchemaPrefix))
+        {
+            errors.Add("Poc:SqlTransport:PartitionSchemaPrefix is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.DatabasePrefix))
+        {
+            errors.Add("Poc:SqlTransport:DatabasePrefix is required.");
         }
 
         var allowedModes = new[] { "None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope" };
@@ -70,8 +88,23 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
             {
                 errors.Add($"Duplicate tenant id '{tenant.TenantId}'.");
             }
+
+            if (!string.IsNullOrWhiteSpace(tenant.DatabaseName) && !IsSqlIdentifier(tenant.DatabaseName))
+            {
+                errors.Add($"Tenant database name '{tenant.DatabaseName}' is invalid.");
+            }
         }
 
         return errors.Count == 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(errors);
+    }
+
+    static bool IsSqlIdentifier(string value)
+    {
+        if (value.Length == 0 || value.Length > 128)
+        {
+            return false;
+        }
+
+        return value.All(ch => char.IsLetterOrDigit(ch) || ch is '_' or '-');
     }
 }

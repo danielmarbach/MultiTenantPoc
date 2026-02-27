@@ -6,10 +6,12 @@ Single ASP.NET Core project hosting multiple NServiceBus endpoints in one proces
 
 - Tenant-specific main endpoints for bulk ingestion.
 - Tenant-specific partition endpoints (`p0`, `p1`, `p2`) for deterministic business-id routing.
+- Database-per-tenant (`NsbPoc_<tenant>` by default).
+- Schema-per-partition (`p0`, `p1`, `p2`) plus `dbo` for tenant main endpoint.
 - `AddNServiceBusEndpoint` multi-host setup with endpoint identifiers.
 - Minimal API sending via the tenant-keyed `IMessageSession`.
 - Console logging with scopes and endpoint-based colors.
-- EF Core database auto-creation on startup via `EnsureCreatedAsync()`.
+- EF Core auto-creates each tenant database and partition schemas on startup.
 
 ## Configuration
 

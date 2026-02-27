@@ -19,15 +19,19 @@ var pocOptions = builder.Configuration.GetSection(PocOptions.SectionName).Get<Po
 
 var endpointCatalog = new EndpointCatalog(pocOptions);
 builder.Services.AddSingleton(endpointCatalog);
-builder.Services.AddDbContext<PocDbContext>(options => options.UseSqlServer(pocOptions.SqlTransport.ConnectionString));
+builder.Services.AddSingleton<TenantDatabaseInitializer>();
 
 foreach (var tenant in pocOptions.Tenants)
 {
     var tenantMainEndpointName = endpointCatalog.GetMainEndpoint(tenant.TenantId);
+    var tenantConnectionString = SqlConnectionStringBuilderFactory.ForDatabase(
+        pocOptions.SqlTransport.ConnectionString,
+        endpointCatalog.GetTenantDatabase(tenant.TenantId));
+
     var mainEndpoint = EndpointFactory.Create(
         endpointName: tenantMainEndpointName,
-        connectionString: pocOptions.SqlTransport.ConnectionString,
-        defaultSchema: pocOptions.SqlTransport.DefaultSchema,
+        connectionString: tenantConnectionString,
+        defaultSchema: pocOptions.SqlTransport.MainSchema,
         transactionMode: pocOptions.SqlTransport.TransactionMode,
         processingConcurrency: Math.Max(1, tenant.MainEndpointConcurrency),
         addHandlers: cfg => cfg.AddHandler<BulkIngestionCommandHandler>(),
@@ -35,18 +39,18 @@ foreach (var tenant in pocOptions.Tenants)
 
     builder.Services.AddNServiceBusEndpoint(mainEndpoint, tenant.TenantId);
 
-    foreach (var partitionEndpointName in endpointCatalog.GetPartitionEndpoints(tenant.TenantId))
+    foreach (var partitionEndpoint in endpointCatalog.GetPartitionEndpoints(tenant.TenantId))
     {
-        var partitionEndpoint = EndpointFactory.Create(
-            endpointName: partitionEndpointName,
-            connectionString: pocOptions.SqlTransport.ConnectionString,
-            defaultSchema: pocOptions.SqlTransport.DefaultSchema,
+        var partitionEndpointConfiguration = EndpointFactory.Create(
+            endpointName: partitionEndpoint.EndpointName,
+            connectionString: tenantConnectionString,
+            defaultSchema: partitionEndpoint.Schema,
             transactionMode: pocOptions.SqlTransport.TransactionMode,
             processingConcurrency: 1,
             addHandlers: cfg => cfg.AddHandler<PartitionedBusinessCommandHandler>(),
             routeToSelfMessageTypes: [typeof(PartitionedBusinessCommand)]);
 
-        builder.Services.AddNServiceBusEndpoint(partitionEndpoint, partitionEndpointName);
+        builder.Services.AddNServiceBusEndpoint(partitionEndpointConfiguration, partitionEndpoint.EndpointName);
     }
 }
 
@@ -54,21 +58,8 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<PocDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
-
-    if (!await dbContext.Tenants.AnyAsync())
-    {
-        var tenants = pocOptions.Tenants
-            .Select(t => new TenantRecord
-            {
-                TenantId = t.TenantId,
-                CreatedUtc = DateTime.UtcNow
-            });
-
-        await dbContext.Tenants.AddRangeAsync(tenants);
-        await dbContext.SaveChangesAsync();
-    }
+    var initializer = scope.ServiceProvider.GetRequiredService<TenantDatabaseInitializer>();
+    await initializer.EnsureCreatedAsync(pocOptions, endpointCatalog);
 }
 
 app.MapGet("/", () => Results.Ok(new
