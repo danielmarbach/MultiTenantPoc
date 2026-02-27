@@ -30,7 +30,8 @@ foreach (var tenant in pocOptions.Tenants)
         defaultSchema: pocOptions.SqlTransport.DefaultSchema,
         transactionMode: pocOptions.SqlTransport.TransactionMode,
         processingConcurrency: Math.Max(1, tenant.MainEndpointConcurrency),
-        addHandlers: cfg => cfg.AddHandler<BulkIngestionCommandHandler>());
+        addHandlers: cfg => cfg.AddHandler<BulkIngestionCommandHandler>(),
+        routeToSelfMessageTypes: [typeof(BulkIngestionCommand)]);
 
     builder.Services.AddNServiceBusEndpoint(mainEndpoint, tenant.TenantId);
 
@@ -42,7 +43,8 @@ foreach (var tenant in pocOptions.Tenants)
             defaultSchema: pocOptions.SqlTransport.DefaultSchema,
             transactionMode: pocOptions.SqlTransport.TransactionMode,
             processingConcurrency: 1,
-            addHandlers: cfg => cfg.AddHandler<PartitionedBusinessCommandHandler>());
+            addHandlers: cfg => cfg.AddHandler<PartitionedBusinessCommandHandler>(),
+            routeToSelfMessageTypes: [typeof(PartitionedBusinessCommand)]);
 
         builder.Services.AddNServiceBusEndpoint(partitionEndpoint, partitionEndpointName);
     }
@@ -77,12 +79,12 @@ app.MapGet("/", () => Results.Ok(new
 
 app.MapGet("/tenants", (EndpointCatalog catalog) => Results.Ok(catalog.Describe()));
 
-app.MapGet("/api/{tenantId}/partition/{businessId:guid}", (string tenantId, Guid businessId, EndpointCatalog catalog) =>
+var tenantApi = app.MapGroup("/api/{tenantId}")
+    .AddEndpointFilter<TenantMessageSessionFilter>();
+
+tenantApi.MapGet("/partition/{businessId:guid}", (string tenantId, Guid businessId, EndpointCatalog catalog) =>
 {
-    if (!catalog.TryResolvePartitionEndpoint(tenantId, businessId, out var endpoint, out var partition))
-    {
-        return Results.NotFound(new { error = $"Unknown tenant '{tenantId}'." });
-    }
+    catalog.TryResolvePartitionEndpoint(tenantId, businessId, out var endpoint, out var partition);
 
     return Results.Ok(new
     {
@@ -93,18 +95,14 @@ app.MapGet("/api/{tenantId}/partition/{businessId:guid}", (string tenantId, Guid
     });
 });
 
-app.MapPost("/api/{tenantId}/bulk", async (
-    string tenantId,
+tenantApi.MapPost("/bulk", async (
     BulkIngestionRequest request,
-    IServiceProvider serviceProvider,
-    EndpointCatalog catalog,
+    HttpContext httpContext,
     ILoggerFactory loggerFactory,
     CancellationToken cancellationToken) =>
 {
-    if (!catalog.TryGetMainEndpoint(tenantId, out var destinationEndpoint))
-    {
-        return Results.NotFound(new { error = $"Unknown tenant '{tenantId}'." });
-    }
+    var tenantContext = httpContext.GetTenantContext();
+    var tenantId = tenantContext.TenantId;
 
     var logger = loggerFactory.CreateLogger("Api");
     using var scope = logger.BeginScope(new Dictionary<string, object>
@@ -114,7 +112,6 @@ app.MapPost("/api/{tenantId}/bulk", async (
         ["Route"] = "bulk"
     });
 
-    var messageSession = serviceProvider.GetRequiredKeyedService<IMessageSession>(tenantId);
     var command = new BulkIngestionCommand
     {
         TenantId = tenantId,
@@ -122,29 +119,28 @@ app.MapPost("/api/{tenantId}/bulk", async (
         Payload = request.Payload
     };
 
-    await messageSession.Send(destinationEndpoint, command, cancellationToken);
-    logger.LogInformation("Sent bulk ingestion command to {DestinationEndpoint}", destinationEndpoint);
+    await tenantContext.MessageSession.Send(command, cancellationToken);
+    logger.LogInformation("Sent bulk ingestion command using configured routing for tenant {TenantId}", tenantId);
 
     return Results.Accepted($"/api/{tenantId}/bulk", new
     {
         tenantId,
         businessId = request.BusinessId,
-        destination = destinationEndpoint
+        mode = "local"
     });
 });
 
-app.MapPost("/api/{tenantId}/business", async (
-    string tenantId,
+tenantApi.MapPost("/business", async (
     PartitionedCommandRequest request,
-    IServiceProvider serviceProvider,
-    EndpointCatalog catalog,
+    HttpContext httpContext,
     ILoggerFactory loggerFactory,
     CancellationToken cancellationToken) =>
 {
-    if (!catalog.TryResolvePartitionEndpoint(tenantId, request.BusinessId, out var destinationEndpoint, out var partition))
-    {
-        return Results.NotFound(new { error = $"Unknown tenant '{tenantId}'." });
-    }
+    var tenantContext = httpContext.GetTenantContext();
+    var partitionContext = httpContext.GetPartitionContext();
+    var tenantId = tenantContext.TenantId;
+    var partitionEndpoint = partitionContext.PartitionEndpoint;
+    var partition = partitionContext.Partition;
 
     var logger = loggerFactory.CreateLogger("Api");
     using var scope = logger.BeginScope(new Dictionary<string, object>
@@ -155,7 +151,6 @@ app.MapPost("/api/{tenantId}/business", async (
         ["Route"] = "partitioned"
     });
 
-    var messageSession = serviceProvider.GetRequiredKeyedService<IMessageSession>(tenantId);
     var command = new PartitionedBusinessCommand
     {
         TenantId = tenantId,
@@ -164,16 +159,18 @@ app.MapPost("/api/{tenantId}/business", async (
         Partition = partition
     };
 
-    await messageSession.Send(destinationEndpoint, command, cancellationToken);
-    logger.LogInformation("Sent partitioned business command to {DestinationEndpoint}", destinationEndpoint);
+    await partitionContext.MessageSession.Send(command, cancellationToken);
+    logger.LogInformation("Sent partitioned business command using configured routing for endpoint {PartitionEndpoint}", partitionEndpoint);
 
     return Results.Accepted($"/api/{tenantId}/business", new
     {
         tenantId,
         businessId = request.BusinessId,
         partition,
-        destination = destinationEndpoint
+        endpoint = partitionEndpoint,
+        mode = "local"
     });
-});
+})
+.AddEndpointFilter<PartitionMessageSessionFilter>();
 
 app.Run();

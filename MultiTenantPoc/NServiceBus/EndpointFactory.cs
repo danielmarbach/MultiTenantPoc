@@ -10,7 +10,8 @@ public static class EndpointFactory
         string defaultSchema,
         string transactionMode,
         int processingConcurrency,
-        Action<EndpointConfiguration> addHandlers)
+        Action<EndpointConfiguration> addHandlers,
+        params Type[] routeToSelfMessageTypes)
     {
         var endpointConfiguration = new EndpointConfiguration(endpointName);
         endpointConfiguration.EnableInstallers();
@@ -26,6 +27,12 @@ public static class EndpointFactory
         transport.ConnectionString(connectionString);
         transport.DefaultSchema(defaultSchema);
         transport.Transactions(ParseMode(transactionMode));
+
+        var routing = transport.Routing();
+        foreach (var messageType in routeToSelfMessageTypes)
+        {
+            routing.RouteToEndpoint(messageType, endpointName);
+        }
 
         return endpointConfiguration;
     }

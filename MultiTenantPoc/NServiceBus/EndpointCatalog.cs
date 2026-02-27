@@ -26,6 +26,8 @@ public sealed class EndpointCatalog
 
     public IReadOnlyCollection<string> GetTenantIds() => mainEndpoints.Keys.ToArray();
 
+    public bool ContainsTenant(string tenantId) => mainEndpoints.ContainsKey(tenantId);
+
     public string GetMainEndpoint(string tenantId) => mainEndpoints[tenantId];
 
     public bool TryGetMainEndpoint(string tenantId, out string endpoint)
