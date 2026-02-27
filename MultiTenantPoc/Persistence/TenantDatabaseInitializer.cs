@@ -21,7 +21,14 @@ public sealed class TenantDatabaseInitializer(ILogger<TenantDatabaseInitializer>
             var partitionSchemas = catalog.GetPartitionSchemas(tenantId);
             foreach (var schema in partitionSchemas)
             {
-                await dbContext.Database.ExecuteSqlAsync($"IF SCHEMA_ID({schema}) IS NULL EXEC(N'CREATE SCHEMA ' + QUOTENAME({schema}))", cancellationToken);
+                await dbContext.Database.ExecuteSqlAsync($"""
+                    DECLARE @schema sysname = {schema};
+                    IF SCHEMA_ID(@schema) IS NULL
+                    BEGIN
+                        DECLARE @sql nvarchar(512) = N'CREATE SCHEMA ' + QUOTENAME(@schema);
+                        EXEC(@sql);
+                    END
+                    """, cancellationToken);
             }
 
             if (!await dbContext.Tenants.AnyAsync(x => x.TenantId == tenantId, cancellationToken))
