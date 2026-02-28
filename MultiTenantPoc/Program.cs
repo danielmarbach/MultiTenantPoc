@@ -15,7 +15,6 @@ var pocOptions = builder.Configuration.GetSection(PocOptions.SectionName).Get<Po
 var endpointCatalog = new EndpointCatalog(pocOptions);
 builder.Services.AddSingleton(endpointCatalog);
 builder.Services.AddSingleton<TenantDatabaseInitializer>();
-builder.Services.AddSingleton<TransactionOutcomeDbInterceptor>();
 
 builder.Services.AddMultiTenantNServiceBusEndpoints(pocOptions, endpointCatalog);
 builder.Services.AddHostedService<TenantTrafficGeneratorHostedService>();

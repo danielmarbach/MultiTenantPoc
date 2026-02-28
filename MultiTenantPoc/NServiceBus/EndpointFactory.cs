@@ -1,6 +1,6 @@
-using NServiceBus;
 using Microsoft.EntityFrameworkCore;
 using NServiceBus.Persistence.Sql;
+using System.Diagnostics;
 
 namespace MultiTenantPoc;
 
@@ -56,15 +56,25 @@ public static class EndpointFactory
             c.AddScoped(serviceProvider =>
             {
                 var session = serviceProvider.GetRequiredService<ISqlStorageSession>();
-                var transactionOutcomeInterceptor = serviceProvider.GetRequiredService<TransactionOutcomeDbInterceptor>();
 
                 var dbContext = new PocDbContext(new DbContextOptionsBuilder<PocDbContext>()
                     .UseSqlServer(session.Connection)
-                    .AddInterceptors(transactionOutcomeInterceptor)
                     .Options);
 
                 dbContext.Database.UseTransaction(session.Transaction);
-                session.OnSaveChanges((_, cancellationToken) => dbContext.SaveChangesAsync(cancellationToken));
+                session.OnSaveChanges(async (_, cancellationToken) =>
+                {
+                    try
+                    {
+                        await dbContext.SaveChangesAsync(cancellationToken);
+                        TagTransactionOutcome("committed");
+                    }
+                    catch
+                    {
+                        TagTransactionOutcome("rolled_back");
+                        throw;
+                    }
+                });
 
                 return dbContext;
             });
@@ -87,5 +97,17 @@ public static class EndpointFactory
         }
 
         throw new InvalidOperationException($"Unsupported transport transaction mode '{mode}'.");
+    }
+
+    static void TagTransactionOutcome(string outcome)
+    {
+        var activity = Activity.Current;
+        if (activity is null)
+        {
+            return;
+        }
+
+        activity.SetTag("db.transaction.outcome", outcome);
+        activity.AddEvent(new ActivityEvent($"db.transaction.{outcome}"));
     }
 }
