@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Hosting;
 using MultiTenantPoc;
 
 var builder = WebApplication.CreateBuilder(args);

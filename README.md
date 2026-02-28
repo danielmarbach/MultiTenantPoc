@@ -40,6 +40,7 @@ dotnet run --project MultiTenantPoc.AppHost/MultiTenantPoc.AppHost.csproj
 ```
 
 This starts SQL Server and the `MultiTenantPoc` app through the Aspire AppHost.
+The AppHost uses the same SQL Edge image as the manual Docker command (`mcr.microsoft.com/azure-sql-edge:latest`).
 
 ## Test endpoints
 
