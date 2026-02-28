@@ -12,6 +12,7 @@ public static class EndpointFactory
         string defaultSchema,
         string errorQueue,
         string auditQueue,
+        string heartbeatQueue,
         string transactionMode,
         int processingConcurrency,
         Action<EndpointConfiguration> addHandlers,
@@ -22,7 +23,11 @@ public static class EndpointFactory
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
         endpointConfiguration.SendFailedMessagesTo(errorQueue);
         endpointConfiguration.AuditProcessedMessagesTo(auditQueue);
+        endpointConfiguration.SendHeartbeatTo(heartbeatQueue);
         endpointConfiguration.LimitMessageProcessingConcurrencyTo(processingConcurrency);
+
+        var recoverability = endpointConfiguration.Recoverability();
+        recoverability.AddUnrecoverableException<SimulatedUnrecoverableException>();
 
         endpointConfiguration.AssemblyScanner().Disable = true;
         addHandlers(endpointConfiguration);

@@ -20,6 +20,7 @@ public sealed class SqlTransportOptions
     public string DatabasePrefix { get; init; } = "NsbPoc_";
     public string ErrorQueue { get; init; } = "error@dbo@ServiceControl";
     public string AuditQueue { get; init; } = "audit@dbo@ServiceControlAudit";
+    public string HeartbeatQueue { get; init; } = "Particular.ServiceControl@dbo@ServiceControl";
     public string TransactionMode { get; init; } = "SendsAtomicWithReceive";
 }
 
@@ -74,6 +75,11 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
         if (string.IsNullOrWhiteSpace(options.SqlTransport.AuditQueue))
         {
             errors.Add("Poc:SqlTransport:AuditQueue is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.HeartbeatQueue))
+        {
+            errors.Add("Poc:SqlTransport:HeartbeatQueue is required.");
         }
 
         var allowedModes = new[] { "None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope" };
