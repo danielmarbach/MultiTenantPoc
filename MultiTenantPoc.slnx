@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="MultiTenantPoc.AppHost/MultiTenantPoc.AppHost.csproj" />
+  <Project Path="MultiTenantPoc.ServiceDefaults/MultiTenantPoc.ServiceDefaults.csproj" />
+  <Project Path="MultiTenantPoc/MultiTenantPoc.csproj" />
+</Solution>

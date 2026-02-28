@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Hosting;
 using MultiTenantPoc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ builder.Services.AddMultiTenantOptions(builder.Configuration);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddProvider(new EndpointColorConsoleLoggerProvider());
+builder.AddServiceDefaults();
 
 var pocOptions = builder.Configuration.GetSection(PocOptions.SectionName).Get<PocOptions>()
     ?? throw new InvalidOperationException($"Configuration section '{PocOptions.SectionName}' is missing.");
@@ -23,5 +25,6 @@ app.UseOpenApi();
 await app.EnsureTenantDatabasesCreatedAsync(pocOptions, endpointCatalog);
 
 app.MapPocEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

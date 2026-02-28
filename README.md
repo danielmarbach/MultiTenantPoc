@@ -33,6 +33,14 @@ dotnet run --project MultiTenantPoc/MultiTenantPoc.csproj
 
 Then open `http://localhost:5122/swagger`.
 
+## Run with .NET Aspire
+
+```bash
+dotnet run --project MultiTenantPoc.AppHost/MultiTenantPoc.AppHost.csproj
+```
+
+This starts SQL Server and the `MultiTenantPoc` app through the Aspire AppHost.
+
 ## Test endpoints
 
 Bulk to tenant main endpoint:
