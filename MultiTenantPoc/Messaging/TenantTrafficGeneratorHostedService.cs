@@ -6,21 +6,12 @@ namespace MultiTenantPoc;
 public sealed class TenantTrafficGeneratorHostedService(
     IServiceProvider serviceProvider,
     EndpointCatalog endpointCatalog,
-    IOptions<TrafficGeneratorOptions> options,
+    IOptionsMonitor<TrafficGeneratorOptions> optionsMonitor,
     ILogger<TenantTrafficGeneratorHostedService> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var generatorOptions = options.Value;
-        if (!generatorOptions.Enabled)
-        {
-            logger.LogInformation("Tenant traffic generator is disabled.");
-            return;
-        }
-
-        var minDelayMs = Math.Max(100, generatorOptions.MinDelayMs);
-        var maxDelayMs = Math.Max(minDelayMs + 1, generatorOptions.MaxDelayMs);
-        var startupDelay = TimeSpan.FromSeconds(Math.Max(0, generatorOptions.StartupDelaySeconds));
+        var startupDelay = TimeSpan.FromSeconds(Math.Max(0, optionsMonitor.CurrentValue.StartupDelaySeconds));
 
         if (startupDelay > TimeSpan.Zero)
         {
@@ -28,10 +19,10 @@ public sealed class TenantTrafficGeneratorHostedService(
         }
 
         var tenantIds = endpointCatalog.GetTenantIds().ToArray();
-        logger.LogInformation("Starting tenant traffic generator for {TenantCount} tenants with delay range {MinDelayMs}-{MaxDelayMs} ms.", tenantIds.Length, minDelayMs, maxDelayMs);
+        logger.LogInformation("Starting tenant traffic generator for {TenantCount} tenants.", tenantIds.Length);
 
         var loops = tenantIds
-            .Select(tenantId => Task.Run(() => RunTenantLoop(tenantId, minDelayMs, maxDelayMs, stoppingToken), stoppingToken))
+            .Select(tenantId => Task.Run(() => RunTenantLoop(tenantId, stoppingToken), stoppingToken))
             .ToArray();
 
         try
@@ -44,16 +35,43 @@ public sealed class TenantTrafficGeneratorHostedService(
         }
     }
 
-    async Task RunTenantLoop(string tenantId, int minDelayMs, int maxDelayMs, CancellationToken cancellationToken)
+    async Task RunTenantLoop(string tenantId, CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting tenant generator loop for {TenantId}", tenantId);
 
         var mainSession = serviceProvider.GetRequiredKeyedService<IMessageSession>(tenantId);
+        bool? wasEnabled = null;
 
         while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
+                var generatorOptions = optionsMonitor.CurrentValue;
+                var minDelayMs = Math.Max(100, generatorOptions.MinDelayMs);
+                var maxDelayMs = Math.Max(minDelayMs + 1, generatorOptions.MaxDelayMs);
+
+                if (!generatorOptions.Enabled)
+                {
+                    if (wasEnabled != false)
+                    {
+                        logger.LogInformation("Tenant generator loop paused for {TenantId}", tenantId);
+                        wasEnabled = false;
+                    }
+
+                    await Task.Delay(1000, cancellationToken);
+                    continue;
+                }
+
+                if (wasEnabled != true)
+                {
+                    logger.LogInformation(
+                        "Tenant generator loop resumed for {TenantId} with delay range {MinDelayMs}-{MaxDelayMs} ms.",
+                        tenantId,
+                        minDelayMs,
+                        maxDelayMs);
+                    wasEnabled = true;
+                }
+
                 var businessId = $"bg-{tenantId}-{Guid.NewGuid():N}";
                 var payload = $"payload-{Random.Shared.Next(1, 10_000)}";
                 var sendBulk = Random.Shared.NextDouble() < 0.5;
