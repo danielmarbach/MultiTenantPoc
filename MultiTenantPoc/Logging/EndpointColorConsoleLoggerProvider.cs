@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
-using Microsoft.Extensions.Logging;
+using System.IO.Hashing;
+using System.Text;
 
 namespace MultiTenantPoc;
 
@@ -42,7 +43,7 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
 
         var endpointColor = endpointColors.GetOrAdd(endpoint, value =>
         {
-            var hash = Math.Abs(value.GetHashCode());
+            var hash = StableHash(value);
             return Palette[hash % Palette.Length];
         });
 
@@ -106,6 +107,14 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
 
     static string? TryGetScopeValue(IEnumerable<KeyValuePair<string, object?>> scopes, string key)
         => scopes.FirstOrDefault(kvp => kvp.Key == key).Value?.ToString();
+
+    static int StableHash(string value)
+    {
+        var normalized = value.ToUpperInvariant();
+        var bytes = Encoding.UTF8.GetBytes(normalized);
+        var hash = XxHash32.HashToUInt32(bytes);
+        return (int)(hash & 0x7fffffff);
+    }
 
     static ConsoleColor GetLogLevelColor(LogLevel level) => level switch
     {
