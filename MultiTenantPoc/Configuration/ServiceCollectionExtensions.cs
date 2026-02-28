@@ -11,6 +11,11 @@ public static class ServiceCollectionExtensions
             .BindConfiguration(PocOptions.SectionName)
             .ValidateOnStart();
 
+        services
+            .AddOptions<TrafficGeneratorOptions>()
+            .BindConfiguration(TrafficGeneratorOptions.SectionName)
+            .ValidateOnStart();
+
         services.AddSingleton<IValidateOptions<PocOptions>, PocOptionsValidator>();
         services.Configure<HostOptions>(configuration.GetSection("HostOptions"));
 

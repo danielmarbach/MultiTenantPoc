@@ -17,6 +17,7 @@ builder.Services.AddSingleton(endpointCatalog);
 builder.Services.AddSingleton<TenantDatabaseInitializer>();
 
 builder.Services.AddMultiTenantNServiceBusEndpoints(pocOptions, endpointCatalog);
+builder.Services.AddHostedService<TenantTrafficGeneratorHostedService>();
 
 var app = builder.Build();
 app.UseOpenApi();
