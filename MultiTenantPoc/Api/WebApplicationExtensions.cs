@@ -59,13 +59,14 @@ public static class WebApplicationExtensions
         .WithDescription("Returns partition and endpoint for tenantId + businessId.");
 
         tenantApi.MapPost("/bulk", async (
+            string tenantId,
             BulkIngestionRequest request,
             HttpContext httpContext,
             ILoggerFactory loggerFactory,
             CancellationToken cancellationToken) =>
         {
             var tenantContext = httpContext.GetTenantContext();
-            var tenantId = tenantContext.TenantId;
+            var resolvedTenantId = tenantContext.TenantId;
 
             var logger = loggerFactory.CreateLogger("Api");
             using var scope = logger.BeginScope(new Dictionary<string, object>
@@ -83,7 +84,7 @@ public static class WebApplicationExtensions
             };
 
             await tenantContext.MessageSession.Send(command, cancellationToken);
-            logger.LogInformation("Sent bulk ingestion command using configured routing for tenant {TenantId}", tenantId);
+            logger.LogInformation("Sent bulk ingestion command using configured routing for tenant {TenantId}", resolvedTenantId);
 
             return Results.Accepted($"/api/{tenantId}/bulk", new
             {
@@ -95,6 +96,7 @@ public static class WebApplicationExtensions
         .WithSummary("Send bulk ingestion command");
 
         tenantApi.MapPost("/business", async (
+            string tenantId,
             PartitionedCommandRequest request,
             HttpContext httpContext,
             ILoggerFactory loggerFactory,
@@ -102,7 +104,7 @@ public static class WebApplicationExtensions
         {
             var tenantContext = httpContext.GetTenantContext();
             var partitionContext = httpContext.GetPartitionContext();
-            var tenantId = tenantContext.TenantId;
+            var resolvedTenantId = tenantContext.TenantId;
             var partitionEndpoint = partitionContext.PartitionEndpoint;
             var partition = partitionContext.Partition;
 
@@ -124,7 +126,7 @@ public static class WebApplicationExtensions
             };
 
             await partitionContext.MessageSession.Send(command, cancellationToken);
-            logger.LogInformation("Sent partitioned business command using configured routing for endpoint {PartitionEndpoint}", partitionEndpoint);
+            logger.LogInformation("Sent partitioned business command using configured routing for endpoint {PartitionEndpoint} and tenant {TenantId}", partitionEndpoint, resolvedTenantId);
 
             return Results.Accepted($"/api/{tenantId}/business", new
             {
