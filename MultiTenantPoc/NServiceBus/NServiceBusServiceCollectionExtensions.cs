@@ -26,9 +26,7 @@ public static class NServiceBusServiceCollectionExtensions
         TenantOptions tenant)
     {
         var tenantMainEndpointName = endpointCatalog.GetMainEndpoint(tenant.TenantId);
-        var tenantConnectionString = SqlConnectionStringBuilderFactory.ForDatabase(
-            options.SqlTransport.ConnectionString,
-            endpointCatalog.GetTenantDatabase(tenant.TenantId));
+        var tenantConnectionString = GetTenantConnectionString(options, endpointCatalog, tenant.TenantId);
 
         var mainEndpoint = EndpointFactory.Create(
             endpointName: tenantMainEndpointName,
@@ -72,9 +70,7 @@ public static class NServiceBusServiceCollectionExtensions
         TenantOptions tenant,
         PartitionEndpointDescriptor partitionEndpoint)
     {
-        var tenantConnectionString = SqlConnectionStringBuilderFactory.ForDatabase(
-            options.SqlTransport.ConnectionString,
-            endpointCatalog.GetTenantDatabase(tenant.TenantId));
+        var tenantConnectionString = GetTenantConnectionString(options, endpointCatalog, tenant.TenantId);
 
         var partitionEndpointConfiguration = EndpointFactory.Create(
             endpointName: partitionEndpoint.EndpointName,
@@ -96,4 +92,9 @@ public static class NServiceBusServiceCollectionExtensions
 
         return services;
     }
+
+    static string GetTenantConnectionString(PocOptions options, EndpointCatalog endpointCatalog, string tenantId)
+        => SqlConnectionStringBuilderFactory.ForDatabase(
+            options.SqlTransport.ConnectionString,
+            endpointCatalog.GetTenantDatabase(tenantId));
 }

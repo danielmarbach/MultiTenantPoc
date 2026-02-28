@@ -22,7 +22,7 @@ public sealed class TenantTrafficGeneratorHostedService(
         logger.LogInformation("Starting tenant traffic generator for {TenantCount} tenants.", tenantIds.Length);
 
         var loops = tenantIds
-            .Select(tenantId => Task.Run(() => RunTenantLoop(tenantId, stoppingToken), stoppingToken))
+            .Select(tenantId => RunTenantLoop(tenantId, stoppingToken))
             .ToArray();
 
         try

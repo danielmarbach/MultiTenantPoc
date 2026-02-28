@@ -56,9 +56,11 @@ public static class EndpointFactory
             c.AddScoped(serviceProvider =>
             {
                 var session = serviceProvider.GetRequiredService<ISqlStorageSession>();
+                var transactionOutcomeInterceptor = serviceProvider.GetRequiredService<TransactionOutcomeDbInterceptor>();
 
                 var dbContext = new PocDbContext(new DbContextOptionsBuilder<PocDbContext>()
                     .UseSqlServer(session.Connection)
+                    .AddInterceptors(transactionOutcomeInterceptor)
                     .Options);
 
                 dbContext.Database.UseTransaction(session.Transaction);

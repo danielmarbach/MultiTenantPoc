@@ -35,6 +35,10 @@ public sealed class TenantOptions
 
 public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
 {
+    static readonly HashSet<string> AllowedTransactionModes = new(
+        ["None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope"],
+        StringComparer.OrdinalIgnoreCase);
+
     public ValidateOptionsResult Validate(string? name, PocOptions options)
     {
         var errors = new List<string>();
@@ -94,8 +98,7 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
             errors.Add("Poc:SqlTransport:MetricsQueue is required.");
         }
 
-        var allowedModes = new[] { "None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope" };
-        if (!allowedModes.Contains(options.SqlTransport.TransactionMode, StringComparer.OrdinalIgnoreCase))
+        if (!AllowedTransactionModes.Contains(options.SqlTransport.TransactionMode))
         {
             errors.Add($"Poc:SqlTransport:TransactionMode '{options.SqlTransport.TransactionMode}' is invalid.");
         }

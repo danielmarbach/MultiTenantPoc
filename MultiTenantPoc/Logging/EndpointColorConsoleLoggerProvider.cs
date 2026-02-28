@@ -6,6 +6,9 @@ namespace MultiTenantPoc;
 
 public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISupportExternalScope
 {
+    static readonly string[] EndpointScopeKeys =
+    ["EndpointIdentifier", "EndpointName", "NServiceBus.EndpointName", "Endpoint"];
+
     static readonly ConsoleColor[] TenantPalette =
     [
         ConsoleColor.Cyan,
@@ -41,18 +44,11 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
     internal void Write(LogLevel logLevel, string category, string message, Exception? exception)
     {
         var scopes = ReadScopes();
-        var endpoint = TryGetScopeValue(scopes, "EndpointIdentifier")
-            ?? TryGetScopeValue(scopes, "EndpointName")
-            ?? TryGetScopeValue(scopes, "NServiceBus.EndpointName")
-            ?? TryGetScopeValue(scopes, "Endpoint")
-            ?? "app";
+        var endpoint = ResolveEndpoint(scopes);
 
         var tenantSeed = GetTenantColorSeed(TryGetScopeValue(scopes, "Endpoint") ?? endpoint);
 
-        var endpointColor = endpointColors.GetOrAdd(endpoint, value =>
-        {
-            return ResolveTenantColor(tenantSeed);
-        });
+        var endpointColor = endpointColors.GetOrAdd(endpoint, _ => ResolveTenantColor(tenantSeed));
 
         lock (gate)
         {
@@ -112,8 +108,32 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
         return values;
     }
 
+    static string ResolveEndpoint(IEnumerable<KeyValuePair<string, object?>> scopes)
+    {
+        foreach (var key in EndpointScopeKeys)
+        {
+            var endpoint = TryGetScopeValue(scopes, key);
+            if (!string.IsNullOrWhiteSpace(endpoint))
+            {
+                return endpoint;
+            }
+        }
+
+        return "app";
+    }
+
     static string? TryGetScopeValue(IEnumerable<KeyValuePair<string, object?>> scopes, string key)
-        => scopes.FirstOrDefault(kvp => string.Equals(kvp.Key, key, StringComparison.OrdinalIgnoreCase)).Value?.ToString();
+    {
+        foreach (var (scopeKey, scopeValue) in scopes)
+        {
+            if (string.Equals(scopeKey, key, StringComparison.OrdinalIgnoreCase))
+            {
+                return scopeValue?.ToString();
+            }
+        }
+
+        return null;
+    }
 
     static int StableHash(string value)
     {

@@ -66,15 +66,9 @@ public static class WebApplicationExtensions
             CancellationToken cancellationToken) =>
         {
             var tenantContext = httpContext.GetTenantContext();
-            var resolvedTenantId = tenantContext.TenantId;
 
             var logger = loggerFactory.CreateLogger("Api");
-            using var scope = logger.BeginScope(new Dictionary<string, object>
-            {
-                ["TenantId"] = tenantId,
-                ["BusinessId"] = request.BusinessId,
-                ["Route"] = "bulk"
-            });
+            using var scope = BeginApiScope(logger, tenantId, request.BusinessId, "bulk");
 
             var command = new BulkIngestionCommand
             {
@@ -84,7 +78,7 @@ public static class WebApplicationExtensions
             };
 
             await tenantContext.MessageSession.Send(command, cancellationToken);
-            logger.LogInformation("Sent bulk ingestion command using configured routing for tenant {TenantId}", resolvedTenantId);
+            logger.LogInformation("Sent bulk ingestion command using configured routing for tenant {TenantId}", tenantContext.TenantId);
 
             return Results.Accepted($"/api/{tenantId}/bulk", new
             {
@@ -104,18 +98,11 @@ public static class WebApplicationExtensions
         {
             var tenantContext = httpContext.GetTenantContext();
             var partitionContext = httpContext.GetPartitionContext();
-            var resolvedTenantId = tenantContext.TenantId;
             var partitionEndpoint = partitionContext.PartitionEndpoint;
             var partition = partitionContext.Partition;
 
             var logger = loggerFactory.CreateLogger("Api");
-            using var scope = logger.BeginScope(new Dictionary<string, object>
-            {
-                ["TenantId"] = tenantId,
-                ["BusinessId"] = request.BusinessId,
-                ["Partition"] = partition,
-                ["Route"] = "partitioned"
-            });
+            using var scope = BeginApiScope(logger, tenantId, request.BusinessId, "partitioned", partition);
 
             var command = new PartitionedBusinessCommand
             {
@@ -126,7 +113,7 @@ public static class WebApplicationExtensions
             };
 
             await partitionContext.MessageSession.Send(command, cancellationToken);
-            logger.LogInformation("Sent partitioned business command using configured routing for endpoint {PartitionEndpoint} and tenant {TenantId}", partitionEndpoint, resolvedTenantId);
+            logger.LogInformation("Sent partitioned business command using configured routing for endpoint {PartitionEndpoint} and tenant {TenantId}", partitionEndpoint, tenantContext.TenantId);
 
             return Results.Accepted($"/api/{tenantId}/business", new
             {
@@ -199,5 +186,22 @@ public static class WebApplicationExtensions
         .WithDescription("Returns recent rows persisted by bulk and partition handlers for the tenant.");
 
         return app;
+    }
+
+    static IDisposable? BeginApiScope(ILogger logger, string tenantId, string businessId, string route, int? partition = null)
+    {
+        var scopeValues = new Dictionary<string, object>
+        {
+            ["TenantId"] = tenantId,
+            ["BusinessId"] = businessId,
+            ["Route"] = route
+        };
+
+        if (partition.HasValue)
+        {
+            scopeValues["Partition"] = partition.Value;
+        }
+
+        return logger.BeginScope(scopeValues);
     }
 }
