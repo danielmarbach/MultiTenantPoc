@@ -32,11 +32,15 @@ public static class NServiceBusServiceCollectionExtensions
 
         var mainEndpoint = EndpointFactory.Create(
             endpointName: tenantMainEndpointName,
+            tenantId: tenant.TenantId,
+            partitionLabel: "main",
             connectionString: tenantConnectionString,
             defaultSchema: options.SqlTransport.MainSchema,
             errorQueue: options.SqlTransport.ErrorQueue,
             auditQueue: options.SqlTransport.AuditQueue,
             heartbeatQueue: options.SqlTransport.HeartbeatQueue,
+            customChecksQueue: options.SqlTransport.CustomChecksQueue,
+            metricsQueue: options.SqlTransport.MetricsQueue,
             transactionMode: options.SqlTransport.TransactionMode,
             processingConcurrency: Math.Max(1, tenant.MainEndpointConcurrency),
             addHandlers: cfg => cfg.AddHandler<BulkIngestionCommandHandler>(),
@@ -74,11 +78,15 @@ public static class NServiceBusServiceCollectionExtensions
 
         var partitionEndpointConfiguration = EndpointFactory.Create(
             endpointName: partitionEndpoint.EndpointName,
+            tenantId: tenant.TenantId,
+            partitionLabel: $"p{partitionEndpoint.Partition}",
             connectionString: tenantConnectionString,
             defaultSchema: partitionEndpoint.Schema,
             errorQueue: options.SqlTransport.ErrorQueue,
             auditQueue: options.SqlTransport.AuditQueue,
             heartbeatQueue: options.SqlTransport.HeartbeatQueue,
+            customChecksQueue: options.SqlTransport.CustomChecksQueue,
+            metricsQueue: options.SqlTransport.MetricsQueue,
             transactionMode: options.SqlTransport.TransactionMode,
             processingConcurrency: 1,
             addHandlers: cfg => cfg.AddHandler<PartitionedBusinessCommandHandler>(),

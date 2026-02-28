@@ -21,6 +21,8 @@ public sealed class SqlTransportOptions
     public string ErrorQueue { get; init; } = "error@dbo@ServiceControl";
     public string AuditQueue { get; init; } = "audit@dbo@ServiceControlAudit";
     public string HeartbeatQueue { get; init; } = "Particular.ServiceControl@dbo@ServiceControl";
+    public string CustomChecksQueue { get; init; } = "Particular.ServiceControl@dbo@ServiceControl";
+    public string MetricsQueue { get; init; } = "Particular.Monitoring@dbo@ServiceControlMonitoring";
     public string TransactionMode { get; init; } = "SendsAtomicWithReceive";
 }
 
@@ -80,6 +82,16 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
         if (string.IsNullOrWhiteSpace(options.SqlTransport.HeartbeatQueue))
         {
             errors.Add("Poc:SqlTransport:HeartbeatQueue is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.CustomChecksQueue))
+        {
+            errors.Add("Poc:SqlTransport:CustomChecksQueue is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.MetricsQueue))
+        {
+            errors.Add("Poc:SqlTransport:MetricsQueue is required.");
         }
 
         var allowedModes = new[] { "None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope" };

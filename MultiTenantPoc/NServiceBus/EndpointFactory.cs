@@ -8,11 +8,15 @@ public static class EndpointFactory
 {
     public static EndpointConfiguration Create(
         string endpointName,
+        string tenantId,
+        string partitionLabel,
         string connectionString,
         string defaultSchema,
         string errorQueue,
         string auditQueue,
         string heartbeatQueue,
+        string customChecksQueue,
+        string metricsQueue,
         string transactionMode,
         int processingConcurrency,
         Action<EndpointConfiguration> addHandlers,
@@ -24,6 +28,10 @@ public static class EndpointFactory
         endpointConfiguration.SendFailedMessagesTo(errorQueue);
         endpointConfiguration.AuditProcessedMessagesTo(auditQueue);
         endpointConfiguration.SendHeartbeatTo(heartbeatQueue);
+        endpointConfiguration.ReportCustomChecksTo(customChecksQueue, TimeSpan.FromSeconds(10));
+        endpointConfiguration.AddCustomCheck<EndpointStartupCustomCheck>();
+        var metrics = endpointConfiguration.EnableMetrics();
+        metrics.SendMetricDataToServiceControl(metricsQueue, TimeSpan.FromSeconds(20));
         endpointConfiguration.LimitMessageProcessingConcurrencyTo(processingConcurrency);
 
         var recoverability = endpointConfiguration.Recoverability();
@@ -43,6 +51,8 @@ public static class EndpointFactory
 
         endpointConfiguration.RegisterComponents(c =>
         {
+            c.AddSingleton(new EndpointStartupCheckContext(endpointName, tenantId, partitionLabel));
+
             c.AddScoped(serviceProvider =>
             {
                 var session = serviceProvider.GetRequiredService<ISqlStorageSession>();
