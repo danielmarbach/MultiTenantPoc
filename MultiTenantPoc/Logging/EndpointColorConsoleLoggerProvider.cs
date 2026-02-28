@@ -6,21 +6,25 @@ namespace MultiTenantPoc;
 
 public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISupportExternalScope
 {
-    static readonly ConsoleColor[] Palette =
+    static readonly ConsoleColor[] TenantPalette =
     [
         ConsoleColor.Cyan,
         ConsoleColor.Green,
-        ConsoleColor.Yellow,
-        ConsoleColor.Magenta,
         ConsoleColor.Blue,
+        ConsoleColor.Red,
         ConsoleColor.DarkCyan,
         ConsoleColor.DarkGreen,
-        ConsoleColor.DarkYellow,
-        ConsoleColor.DarkMagenta
+        ConsoleColor.DarkBlue,
+        ConsoleColor.DarkRed,
+        ConsoleColor.DarkMagenta,
+        ConsoleColor.Magenta
     ];
 
     readonly object gate = new();
+    readonly object colorGate = new();
     readonly ConcurrentDictionary<string, ConsoleColor> endpointColors = new(StringComparer.OrdinalIgnoreCase);
+    readonly ConcurrentDictionary<string, ConsoleColor> tenantColors = new(StringComparer.OrdinalIgnoreCase);
+    readonly HashSet<ConsoleColor> usedTenantColors = [];
     IExternalScopeProvider scopeProvider = new LoggerExternalScopeProvider();
 
     public ILogger CreateLogger(string categoryName) => new EndpointColorConsoleLogger(categoryName, this);
@@ -38,13 +42,16 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
     {
         var scopes = ReadScopes();
         var endpoint = TryGetScopeValue(scopes, "EndpointIdentifier")
+            ?? TryGetScopeValue(scopes, "EndpointName")
+            ?? TryGetScopeValue(scopes, "NServiceBus.EndpointName")
             ?? TryGetScopeValue(scopes, "Endpoint")
             ?? "app";
 
+        var tenantSeed = GetTenantColorSeed(TryGetScopeValue(scopes, "Endpoint") ?? endpoint);
+
         var endpointColor = endpointColors.GetOrAdd(endpoint, value =>
         {
-            var hash = StableHash(value);
-            return Palette[hash % Palette.Length];
+            return ResolveTenantColor(tenantSeed);
         });
 
         lock (gate)
@@ -106,7 +113,7 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
     }
 
     static string? TryGetScopeValue(IEnumerable<KeyValuePair<string, object?>> scopes, string key)
-        => scopes.FirstOrDefault(kvp => kvp.Key == key).Value?.ToString();
+        => scopes.FirstOrDefault(kvp => string.Equals(kvp.Key, key, StringComparison.OrdinalIgnoreCase)).Value?.ToString();
 
     static int StableHash(string value)
     {
@@ -114,6 +121,44 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
         var bytes = Encoding.UTF8.GetBytes(normalized);
         var hash = XxHash32.HashToUInt32(bytes);
         return (int)(hash & 0x7fffffff);
+    }
+
+    static string GetTenantColorSeed(string endpoint)
+    {
+        var marker = endpoint.LastIndexOf("-p", StringComparison.OrdinalIgnoreCase);
+        if (marker > 0)
+        {
+            return endpoint[..marker];
+        }
+
+        return endpoint;
+    }
+
+    ConsoleColor ResolveTenantColor(string tenantSeed)
+    {
+        return tenantColors.GetOrAdd(tenantSeed, seed =>
+        {
+            lock (colorGate)
+            {
+                if (usedTenantColors.Count >= TenantPalette.Length)
+                {
+                    var wrapHash = StableHash(seed);
+                    return TenantPalette[wrapHash % TenantPalette.Length];
+                }
+
+                var start = StableHash(seed) % TenantPalette.Length;
+                for (var offset = 0; offset < TenantPalette.Length; offset++)
+                {
+                    var candidate = TenantPalette[(start + offset) % TenantPalette.Length];
+                    if (usedTenantColors.Add(candidate))
+                    {
+                        return candidate;
+                    }
+                }
+
+                return TenantPalette[start];
+            }
+        });
     }
 
     static ConsoleColor GetLogLevelColor(LogLevel level) => level switch
