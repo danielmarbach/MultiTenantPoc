@@ -18,6 +18,8 @@ public sealed class SqlTransportOptions
     public string MainSchema { get; init; } = "dbo";
     public string PartitionSchemaPrefix { get; init; } = "p";
     public string DatabasePrefix { get; init; } = "NsbPoc_";
+    public string ErrorQueue { get; init; } = "error@dbo@ServiceControl";
+    public string AuditQueue { get; init; } = "audit@dbo@ServiceControlAudit";
     public string TransactionMode { get; init; } = "SendsAtomicWithReceive";
 }
 
@@ -62,6 +64,16 @@ public sealed class PocOptionsValidator : IValidateOptions<PocOptions>
         if (string.IsNullOrWhiteSpace(options.SqlTransport.DatabasePrefix))
         {
             errors.Add("Poc:SqlTransport:DatabasePrefix is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.ErrorQueue))
+        {
+            errors.Add("Poc:SqlTransport:ErrorQueue is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.SqlTransport.AuditQueue))
+        {
+            errors.Add("Poc:SqlTransport:AuditQueue is required.");
         }
 
         var allowedModes = new[] { "None", "ReceiveOnly", "SendsAtomicWithReceive", "TransactionScope" };

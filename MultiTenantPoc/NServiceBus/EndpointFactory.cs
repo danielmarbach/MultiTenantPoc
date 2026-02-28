@@ -10,6 +10,8 @@ public static class EndpointFactory
         string endpointName,
         string connectionString,
         string defaultSchema,
+        string errorQueue,
+        string auditQueue,
         string transactionMode,
         int processingConcurrency,
         Action<EndpointConfiguration> addHandlers,
@@ -18,8 +20,8 @@ public static class EndpointFactory
         var endpointConfiguration = new EndpointConfiguration(endpointName);
         endpointConfiguration.EnableInstallers();
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
-        endpointConfiguration.SendFailedMessagesTo("error");
-        endpointConfiguration.AuditProcessedMessagesTo("audit");
+        endpointConfiguration.SendFailedMessagesTo(errorQueue);
+        endpointConfiguration.AuditProcessedMessagesTo(auditQueue);
         endpointConfiguration.LimitMessageProcessingConcurrencyTo(processingConcurrency);
 
         endpointConfiguration.AssemblyScanner().Disable = true;

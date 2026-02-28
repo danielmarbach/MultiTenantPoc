@@ -50,7 +50,8 @@ var serviceControl = builder.AddContainer("ServiceControl", "particular/servicec
     .WithHttpHealthCheck("api/configuration")
     .WaitFor(sqlEdge)
     .WaitFor(sqlInit)
-    .WaitFor(ravenDb);
+    .WaitFor(ravenDb)
+    .WaitFor(audit);
 
 var monitoring = builder.AddContainer("ServiceControl-Monitoring", "particular/servicecontrol-monitoring")
     .WithEnvironment("TRANSPORTTYPE", "SQLServer")
