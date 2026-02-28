@@ -55,7 +55,10 @@ public static class Extensions
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
             {
-                metrics.AddMeter("NServiceBus.*")
+                metrics.AddMeter(
+                        "NServiceBus.Core.Pipeline.Incoming",
+                        "NServiceBus.TransactionalSession",
+                        "NServiceBus.Envelope.CloudEvents")
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
