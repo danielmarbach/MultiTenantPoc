@@ -1,32 +1,49 @@
 using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
 using NServiceBus;
 
 namespace MultiTenantPoc;
 
-public sealed class BulkIngestionCommandHandler(ILogger<BulkIngestionCommandHandler> logger)
+public sealed class BulkIngestionCommandHandler(ILogger<BulkIngestionCommandHandler> logger, PocDbContext dbContext)
     : IHandleMessages<BulkIngestionCommand>
 {
-    public Task Handle(BulkIngestionCommand message, IMessageHandlerContext context)
+    public async Task Handle(BulkIngestionCommand message, IMessageHandlerContext context)
     {
+        await dbContext.BulkIngestionMessages.AddAsync(new BulkIngestionMessage
+        {
+            TenantId = message.TenantId,
+            BusinessId = message.BusinessId,
+            Payload = message.Payload,
+            ReceivedUtc = DateTime.UtcNow
+        }, context.CancellationToken);
+
         logger.LogInformation(
             "Handled bulk ingestion command for TenantId={TenantId}, BusinessId={BusinessId}, Payload={Payload}",
             message.TenantId,
             message.BusinessId,
             message.Payload);
-
-        return Task.CompletedTask;
     }
 }
 
-public sealed class PartitionedBusinessCommandHandler(ILogger<PartitionedBusinessCommandHandler> logger)
+public sealed class PartitionedBusinessCommandHandler(ILogger<PartitionedBusinessCommandHandler> logger, PocDbContext dbContext)
     : IHandleMessages<PartitionedBusinessCommand>
 {
     static readonly ConcurrentDictionary<string, long> MessageOrder = new();
 
-    public Task Handle(PartitionedBusinessCommand message, IMessageHandlerContext context)
+    public async Task Handle(PartitionedBusinessCommand message, IMessageHandlerContext context)
     {
         var key = $"{message.TenantId}:{message.BusinessId}";
         var sequence = MessageOrder.AddOrUpdate(key, 1, (_, current) => current + 1);
+
+        await dbContext.PartitionedBusinessMessages.AddAsync(new PartitionedBusinessMessage
+        {
+            TenantId = message.TenantId,
+            BusinessId = message.BusinessId,
+            Partition = message.Partition,
+            Sequence = sequence,
+            Payload = message.Payload,
+            ReceivedUtc = DateTime.UtcNow
+        }, context.CancellationToken);
 
         logger.LogInformation(
             "Handled partitioned command for TenantId={TenantId}, BusinessId={BusinessId}, Partition={Partition}, Sequence={Sequence}, Payload={Payload}",
@@ -35,7 +52,5 @@ public sealed class PartitionedBusinessCommandHandler(ILogger<PartitionedBusines
             message.Partition,
             sequence,
             message.Payload);
-
-        return Task.CompletedTask;
     }
 }

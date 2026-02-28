@@ -1,4 +1,6 @@
 using NServiceBus;
+using Microsoft.EntityFrameworkCore;
+using NServiceBus.Persistence.Sql;
 
 namespace MultiTenantPoc;
 
@@ -27,6 +29,27 @@ public static class EndpointFactory
         transport.ConnectionString(connectionString);
         transport.DefaultSchema(defaultSchema);
         transport.Transactions(ParseMode(transactionMode));
+
+        var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
+        persistence.SqlDialect<SqlDialect.MsSqlServer>();
+        persistence.ConnectionBuilder(() => new Microsoft.Data.SqlClient.SqlConnection(connectionString));
+
+        endpointConfiguration.RegisterComponents(c =>
+        {
+            c.AddScoped(serviceProvider =>
+            {
+                var session = serviceProvider.GetRequiredService<ISqlStorageSession>();
+
+                var dbContext = new PocDbContext(new DbContextOptionsBuilder<PocDbContext>()
+                    .UseSqlServer(session.Connection)
+                    .Options);
+
+                dbContext.Database.UseTransaction(session.Transaction);
+                session.OnSaveChanges((_, cancellationToken) => dbContext.SaveChangesAsync(cancellationToken));
+
+                return dbContext;
+            });
+        });
 
         var routing = transport.Routing();
         foreach (var messageType in routeToSelfMessageTypes)

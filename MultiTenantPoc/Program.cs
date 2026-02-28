@@ -24,7 +24,7 @@ app.UseOpenApi();
 
 await app.EnsureTenantDatabasesCreatedAsync(pocOptions, endpointCatalog);
 
-app.MapPocEndpoints();
+app.MapPocEndpoints(pocOptions);
 app.MapDefaultEndpoints();
 
 app.Run();

@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace MultiTenantPoc;
 
 public static class WebApplicationExtensions
@@ -28,7 +30,7 @@ public static class WebApplicationExtensions
         await initializer.EnsureCreatedAsync(options, endpointCatalog);
     }
 
-    public static WebApplication MapPocEndpoints(this WebApplication app)
+    public static WebApplication MapPocEndpoints(this WebApplication app, PocOptions options)
     {
         app.MapGet("/", (EndpointCatalog catalog) => Results.Ok(new
         {
@@ -135,6 +137,64 @@ public static class WebApplicationExtensions
         })
         .WithSummary("Send partitioned business command")
         .AddEndpointFilter<PartitionMessageSessionFilter>();
+
+        tenantApi.MapGet("/persisted", async (
+            string tenantId,
+            EndpointCatalog catalog,
+            int? take,
+            CancellationToken cancellationToken) =>
+        {
+            var rowLimit = Math.Clamp(take ?? 20, 1, 200);
+            var tenantConnectionString = SqlConnectionStringBuilderFactory.ForDatabase(
+                options.SqlTransport.ConnectionString,
+                catalog.GetTenantDatabase(tenantId));
+
+            var dbOptions = new DbContextOptionsBuilder<PocDbContext>()
+                .UseSqlServer(tenantConnectionString)
+                .Options;
+
+            await using var dbContext = new PocDbContext(dbOptions);
+
+            var bulk = await dbContext.BulkIngestionMessages
+                .AsNoTracking()
+                .OrderByDescending(x => x.Id)
+                .Take(rowLimit)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.TenantId,
+                    x.BusinessId,
+                    x.Payload,
+                    x.ReceivedUtc
+                })
+                .ToListAsync(cancellationToken);
+
+            var partitioned = await dbContext.PartitionedBusinessMessages
+                .AsNoTracking()
+                .OrderByDescending(x => x.Id)
+                .Take(rowLimit)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.TenantId,
+                    x.BusinessId,
+                    x.Partition,
+                    x.Sequence,
+                    x.Payload,
+                    x.ReceivedUtc
+                })
+                .ToListAsync(cancellationToken);
+
+            return Results.Ok(new
+            {
+                tenantId,
+                take = rowLimit,
+                bulk,
+                partitioned
+            });
+        })
+        .WithSummary("Inspect persisted handler rows")
+        .WithDescription("Returns recent rows persisted by bulk and partition handlers for the tenant.");
 
         return app;
     }
