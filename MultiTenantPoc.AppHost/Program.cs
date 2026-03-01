@@ -36,7 +36,7 @@ var audit = builder.AddContainer("ServiceControl-Audit", "particular/servicecont
     .WithUrlForEndpoint("http", url => url.DisplayLocation = UrlDisplayLocation.DetailsOnly)
     .WithHttpHealthCheck("api/configuration")
     .WaitFor(sqlEdge)
-    .WaitFor(sqlInit)
+    .WaitForCompletion(sqlInit)
     .WaitFor(ravenDb);
 
 var serviceControl = builder.AddContainer("ServiceControl", "particular/servicecontrol")
@@ -49,7 +49,7 @@ var serviceControl = builder.AddContainer("ServiceControl", "particular/servicec
     .WithUrlForEndpoint("http", url => url.DisplayLocation = UrlDisplayLocation.DetailsOnly)
     .WithHttpHealthCheck("api/configuration")
     .WaitFor(sqlEdge)
-    .WaitFor(sqlInit)
+    .WaitForCompletion(sqlInit)
     .WaitFor(ravenDb)
     .WaitFor(audit);
 
@@ -61,7 +61,7 @@ var monitoring = builder.AddContainer("ServiceControl-Monitoring", "particular/s
     .WithUrlForEndpoint("http", url => url.DisplayLocation = UrlDisplayLocation.DetailsOnly)
     .WithHttpHealthCheck("connection")
     .WaitFor(sqlEdge)
-    .WaitFor(sqlInit);
+    .WaitForCompletion(sqlInit);
 
 var servicePulse = builder.AddContainer("ServicePulse", "particular/servicepulse")
     .WithEnvironment("ENABLE_REVERSE_PROXY", "false")
@@ -74,6 +74,7 @@ var servicePulse = builder.AddContainer("ServicePulse", "particular/servicepulse
 builder.AddProject<Projects.MultiTenantPoc>("multitenant-poc")
     .WithEnvironment("Poc__SqlTransport__ConnectionString", hostSqlConnectionString)
     .WaitFor(sqlEdge)
-    .WaitFor(sqlInit);
+    .WaitForCompletion(sqlInit)
+    .WaitFor(servicePulse);
 
 builder.Build().Run();
