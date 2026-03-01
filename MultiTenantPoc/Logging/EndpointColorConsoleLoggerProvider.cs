@@ -1,7 +1,3 @@
-using System.Collections.Concurrent;
-using System.IO.Hashing;
-using System.Text;
-
 namespace MultiTenantPoc;
 
 public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISupportExternalScope
@@ -9,26 +5,12 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
     static readonly string[] EndpointScopeKeys =
     ["EndpointIdentifier", "EndpointName", "NServiceBus.EndpointName", "Endpoint"];
 
-    static readonly ConsoleColor[] TenantPalette =
-    [
-        ConsoleColor.Cyan,
-        ConsoleColor.Green,
-        ConsoleColor.Blue,
-        ConsoleColor.Red,
-        ConsoleColor.DarkCyan,
-        ConsoleColor.DarkGreen,
-        ConsoleColor.DarkBlue,
-        ConsoleColor.DarkRed,
-        ConsoleColor.DarkMagenta,
-        ConsoleColor.Magenta
-    ];
+    readonly Lock gate = new();
 
-    readonly object gate = new();
-    readonly object colorGate = new();
-    readonly ConcurrentDictionary<string, ConsoleColor> endpointColors = new(StringComparer.OrdinalIgnoreCase);
-    readonly ConcurrentDictionary<string, ConsoleColor> tenantColors = new(StringComparer.OrdinalIgnoreCase);
-    readonly HashSet<ConsoleColor> usedTenantColors = [];
-    IExternalScopeProvider scopeProvider = new LoggerExternalScopeProvider();
+    private readonly bool disableColors =
+        string.Equals(Environment.GetEnvironmentVariable("NO_COLOR"), "1", StringComparison.OrdinalIgnoreCase);
+
+    private IExternalScopeProvider scopeProvider = new LoggerExternalScopeProvider();
 
     public ILogger CreateLogger(string categoryName) => new EndpointColorConsoleLogger(categoryName, this);
 
@@ -45,50 +27,107 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
     {
         var scopes = ReadScopes();
         var endpoint = ResolveEndpoint(scopes);
-
-        var tenantSeed = GetTenantColorSeed(TryGetScopeValue(scopes, "Endpoint") ?? endpoint);
-
-        var endpointColor = endpointColors.GetOrAdd(endpoint, _ => ResolveTenantColor(tenantSeed));
+        var endpointColor = ResolveTenantColor(endpoint);
 
         lock (gate)
         {
-            var timestamp = DateTimeOffset.Now.ToString("HH:mm:ss.fff");
-
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write(timestamp);
+            WriteColored(DateTimeOffset.Now.ToString("HH:mm:ss.fff"), ConsoleColor.DarkGray, ConsoleColor.Black);
             Console.Write(' ');
 
-            Console.ForegroundColor = GetLogLevelColor(logLevel);
-            Console.Write($"[{logLevel,-11}]");
+            WriteColored($"[{logLevel,-11}]", GetLogLevelColor(logLevel), ConsoleColor.Black);
             Console.Write(' ');
 
-            Console.ForegroundColor = endpointColor;
-            Console.Write($"[{endpoint}]");
+            WriteColored($"[{endpoint}]", endpointColor, ConsoleColor.Black);
             Console.Write(' ');
 
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write(category);
+            WriteColored(category, ConsoleColor.Gray, ConsoleColor.Black);
             Console.Write(" - ");
-            Console.Write(message);
+            WriteColored(message, ConsoleColor.Gray, ConsoleColor.Black);
 
             if (scopes.Count > 0)
             {
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write(" | scopes: ");
-                Console.Write(string.Join(", ", scopes.Select(kvp => $"{kvp.Key}={kvp.Value}")));
+                WriteColored(" | scopes: ", ConsoleColor.DarkGray, ConsoleColor.Black);
+                WriteColored(string.Join(", ", scopes.Select(kvp => $"{kvp.Key}={kvp.Value}")), ConsoleColor.DarkGray, ConsoleColor.Black);
             }
 
             Console.WriteLine();
 
             if (exception is not null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(exception);
+                WriteColored(exception.ToString(), ConsoleColor.Red, ConsoleColor.Black);
+                Console.WriteLine();
             }
-
-            Console.ResetColor();
         }
     }
+
+    private void WriteColored(string value, ConsoleColor foreground, ConsoleColor? background = null)
+    {
+        if (disableColors)
+        {
+            Console.Write(value);
+            return;
+        }
+
+        if (background.HasValue)
+        {
+            Console.Write(GetBackgroundColorEscapeCode(background.Value));
+        }
+        Console.Write(GetForegroundColorEscapeCode(foreground));
+        Console.Write(value);
+        Console.Write(DefaultForegroundColor);
+        if (background.HasValue)
+        {
+            Console.Write(DefaultBackgroundColor);
+        }
+    }
+
+    // Uses the same escape codes as Microsoft.Extensions.Logging.Console.AnsiParser
+    // Bright colors use bold (\x1B[1m) + base code, NOT the 90-97 range,
+    // because Aspire's dashboard ANSI parser doesn't support 90-97.
+    const string DefaultForegroundColor = "\x1B[39m\x1B[22m";
+    const string DefaultBackgroundColor = "\x1B[49m";
+
+    static string GetForegroundColorEscapeCode(ConsoleColor color) => color switch
+    {
+        ConsoleColor.Black => "\x1B[30m",
+        ConsoleColor.DarkRed => "\x1B[31m",
+        ConsoleColor.DarkGreen => "\x1B[32m",
+        ConsoleColor.DarkYellow => "\x1B[33m",
+        ConsoleColor.DarkBlue => "\x1B[34m",
+        ConsoleColor.DarkMagenta => "\x1B[35m",
+        ConsoleColor.DarkCyan => "\x1B[36m",
+        ConsoleColor.Gray => "\x1B[37m",
+        ConsoleColor.DarkGray => "\x1B[1m\x1B[30m",
+        ConsoleColor.Red => "\x1B[1m\x1B[31m",
+        ConsoleColor.Green => "\x1B[1m\x1B[32m",
+        ConsoleColor.Yellow => "\x1B[1m\x1B[33m",
+        ConsoleColor.Blue => "\x1B[1m\x1B[34m",
+        ConsoleColor.Magenta => "\x1B[1m\x1B[35m",
+        ConsoleColor.Cyan => "\x1B[1m\x1B[36m",
+        ConsoleColor.White => "\x1B[1m\x1B[37m",
+        _ => DefaultForegroundColor
+    };
+
+    static string GetBackgroundColorEscapeCode(ConsoleColor color) => color switch
+    {
+        ConsoleColor.Black => "\x1B[40m",
+        ConsoleColor.DarkRed => "\x1B[41m",
+        ConsoleColor.DarkGreen => "\x1B[42m",
+        ConsoleColor.DarkYellow => "\x1B[43m",
+        ConsoleColor.DarkBlue => "\x1B[44m",
+        ConsoleColor.DarkMagenta => "\x1B[45m",
+        ConsoleColor.DarkCyan => "\x1B[46m",
+        ConsoleColor.Gray => "\x1B[47m",
+        ConsoleColor.DarkGray => "\x1B[1m\x1B[40m",
+        ConsoleColor.Red => "\x1B[1m\x1B[41m",
+        ConsoleColor.Green => "\x1B[1m\x1B[42m",
+        ConsoleColor.Yellow => "\x1B[1m\x1B[43m",
+        ConsoleColor.Blue => "\x1B[1m\x1B[44m",
+        ConsoleColor.Magenta => "\x1B[1m\x1B[45m",
+        ConsoleColor.Cyan => "\x1B[1m\x1B[46m",
+        ConsoleColor.White => "\x1B[1m\x1B[47m",
+        _ => DefaultBackgroundColor
+    };
 
     List<KeyValuePair<string, object?>> ReadScopes()
     {
@@ -135,50 +174,34 @@ public sealed class EndpointColorConsoleLoggerProvider : ILoggerProvider, ISuppo
         return null;
     }
 
-    static int StableHash(string value)
+    static ConsoleColor ResolveTenantColor(string endpoint)
     {
-        var normalized = value.ToUpperInvariant();
-        var bytes = Encoding.UTF8.GetBytes(normalized);
-        var hash = XxHash32.HashToUInt32(bytes);
-        return (int)(hash & 0x7fffffff);
-    }
-
-    static string GetTenantColorSeed(string endpoint)
-    {
-        var marker = endpoint.LastIndexOf("-p", StringComparison.OrdinalIgnoreCase);
-        if (marker > 0)
+        if (endpoint.Contains("tenant-a", StringComparison.OrdinalIgnoreCase))
         {
-            return endpoint[..marker];
+            return ConsoleColor.Cyan;
         }
 
-        return endpoint;
-    }
-
-    ConsoleColor ResolveTenantColor(string tenantSeed)
-    {
-        return tenantColors.GetOrAdd(tenantSeed, seed =>
+        if (endpoint.Contains("tenant-b", StringComparison.OrdinalIgnoreCase))
         {
-            lock (colorGate)
-            {
-                if (usedTenantColors.Count >= TenantPalette.Length)
-                {
-                    var wrapHash = StableHash(seed);
-                    return TenantPalette[wrapHash % TenantPalette.Length];
-                }
+            return ConsoleColor.Green;
+        }
 
-                var start = StableHash(seed) % TenantPalette.Length;
-                for (var offset = 0; offset < TenantPalette.Length; offset++)
-                {
-                    var candidate = TenantPalette[(start + offset) % TenantPalette.Length];
-                    if (usedTenantColors.Add(candidate))
-                    {
-                        return candidate;
-                    }
-                }
+        if (endpoint.Contains("tenant-c", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Magenta;
+        }
 
-                return TenantPalette[start];
-            }
-        });
+        if (endpoint.Contains("tenant-d", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Red;
+        }
+
+        if (endpoint.Contains("tenant-e", StringComparison.OrdinalIgnoreCase))
+        {
+            return ConsoleColor.Blue;
+        }
+
+        return ConsoleColor.Gray;
     }
 
     static ConsoleColor GetLogLevelColor(LogLevel level) => level switch
