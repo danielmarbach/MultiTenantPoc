@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
-    <PackageReference Include="NServiceBus" Version="10.2.0-alpha.1.27" />
+    <PackageReference Include="NServiceBus" Version="10.2.0-alpha.1.46" />
     <PackageReference Include="NServiceBus.CustomChecks" Version="6.0.0" />
     <PackageReference Include="NServiceBus.Heartbeat" Version="6.0.0" />
     <PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="6.0.0" />
