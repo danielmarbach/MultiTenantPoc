@@ -74,7 +74,6 @@ var servicePulse = builder.AddContainer("ServicePulse", "particular/servicepulse
 builder.AddProject<Projects.MultiTenantPoc>("multitenant-poc")
     .WithEnvironment("Poc__SqlTransport__ConnectionString", hostSqlConnectionString)
     .WaitFor(sqlEdge)
-    .WaitFor(sqlInit)
-    .WaitFor(servicePulse);
+    .WaitFor(sqlInit);
 
 builder.Build().Run();
