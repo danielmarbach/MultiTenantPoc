@@ -35,7 +35,7 @@ This view shows how the API host, routing, SQL data layer, ServiceControl stack,
 
 ```mermaid
 flowchart LR
-    U[Clients / API Consumers] --> API[MultiTenant API Host (.NET)]
+    U[Clients / API Consumers] --> API[MultiTenant API Host]
     API --> ROUTER[Tenant + Partition Routing]
     ROUTER --> MAIN[Tenant Main Endpoints]
     ROUTER --> PART[Tenant Partition Endpoints]
