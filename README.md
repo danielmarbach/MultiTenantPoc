@@ -15,6 +15,107 @@ Single ASP.NET Core project hosting multiple NServiceBus endpoints in one proces
 - OpenAPI document in development at `/openapi/v1.json`.
 - Swagger UI in development at `/swagger`.
 
+## Architecture diagrams
+
+### High-level architecture
+
+The PoC runs as a single host process. The API routes requests by tenant and partition into in-process NServiceBus endpoints. Endpoints persist into tenant-isolated SQL databases and report operational telemetry to the ServiceControl stack.
+
+```mermaid
+flowchart LR
+    C[Clients / API Consumers] --> A[Application Layer<br/>ASP.NET Core + Tenant Routing]
+    A --> M[Messaging Layer<br/>In-process Tenant Endpoints]
+    M --> D[Persistence Layer<br/>SQL Server per Tenant]
+    M --> O[Operations Layer<br/>ServiceControl / Audit / Monitoring / Pulse]
+```
+
+### System context (host, data, and operations)
+
+This view shows how the API host, routing, SQL data layer, ServiceControl stack, and Aspire AppHost orchestration fit together.
+
+```mermaid
+flowchart LR
+    U[Clients / API Consumers] --> API[MultiTenant API Host (.NET)]
+    API --> ROUTER[Tenant + Partition Routing]
+    ROUTER --> MAIN[Tenant Main Endpoints]
+    ROUTER --> PART[Tenant Partition Endpoints]
+
+    subgraph APP[Single Application Process]
+        API
+        ROUTER
+        MAIN
+        PART
+    end
+
+    MAIN --> SQL[(SQL Server<br/>Tenant Databases)]
+    PART --> SQL
+
+    MAIN -. error/audit/metrics .-> OPS[ServiceControl Stack]
+    PART -. error/audit/metrics .-> OPS
+
+    subgraph OBS[Operations / Observability]
+        OPS[ServiceControl + Audit + Monitoring]
+        SP[ServicePulse]
+        R[(RavenDB)]
+        SP --> OPS
+        OPS --> R
+    end
+
+    AH[.NET Aspire AppHost] --> APP
+    AH --> SQL
+    AH --> OBS
+```
+
+### Host with tenant endpoint topology
+
+Each tenant has a main endpoint plus partition endpoints. Every endpoint has its own queue and writes to the tenant's database.
+
+```mermaid
+flowchart LR
+    subgraph HOST["Host Process (.NET App)"]
+        direction LR
+
+        subgraph T1["Tenant A"]
+            direction TB
+            A_Q_MAIN[[Queue: tenant-a-main]] --> A_MAIN[Main Endpoint]
+            A_Q_P0[[Queue: tenant-a-p0]] --> A_P0[Partition Endpoint p0]
+            A_Q_P1[[Queue: tenant-a-p1]] --> A_P1[Partition Endpoint p1]
+            A_Q_P2[[Queue: tenant-a-p2]] --> A_P2[Partition Endpoint p2]
+
+            A_MAIN --> A_DB[(Tenant A Database)]
+            A_P0 --> A_DB
+            A_P1 --> A_DB
+            A_P2 --> A_DB
+        end
+
+        subgraph T2["Tenant B"]
+            direction TB
+            B_Q_MAIN[[Queue: tenant-b-main]] --> B_MAIN[Main Endpoint]
+            B_Q_P0[[Queue: tenant-b-p0]] --> B_P0[Partition Endpoint p0]
+            B_Q_P1[[Queue: tenant-b-p1]] --> B_P1[Partition Endpoint p1]
+            B_Q_P2[[Queue: tenant-b-p2]] --> B_P2[Partition Endpoint p2]
+
+            B_MAIN --> B_DB[(Tenant B Database)]
+            B_P0 --> B_DB
+            B_P1 --> B_DB
+            B_P2 --> B_DB
+        end
+
+        subgraph TN["Tenant N"]
+            direction TB
+            N_Q_MAIN[[Queue: tenant-n-main]] --> N_MAIN[Main Endpoint]
+            N_Q_P0[[Queue: tenant-n-p0]] --> N_P0[Partition Endpoint p0]
+            N_Q_P1[[Queue: tenant-n-p1]] --> N_P1[Partition Endpoint p1]
+            N_Q_P2[[Queue: tenant-n-p2]] --> N_P2[Partition Endpoint p2]
+
+            N_MAIN --> N_DB[(Tenant N Database)]
+            N_P0 --> N_DB
+            N_P1 --> N_DB
+            N_P2 --> N_DB
+        end
+    end
+```
+
 ## Configuration
 
 Tenants and SQL transport are configured in `MultiTenantPoc/appsettings.json` under `Poc`.
