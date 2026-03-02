@@ -1,0 +1,336 @@
+<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="1413.74px" height="1565.32px"
+		style="transform-origin: 0px 0px 0px;" version="1.1"
+		xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style xmlns="http://www.w3.org/2000/svg" type="text/css"><![CDATA[
+		* {
+			text-rendering: geometricprecision !important;
+		}
+		]]><![CDATA[@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Noto Sans'), local('NotoSans'), url("https://mirostatic.com/app/static/a73798e3d459e1bc.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Noto Sans Italic'), local('NotoSans-Italic'), url("https://mirostatic.com/app/static/a8edd710f88715d4.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Noto Sans Medium'), local('NotoSans-Medium'), url("https://mirostatic.com/app/static/006d7e33e60b9e12.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 500;
+  src: local('Noto Sans Medium Italic'), local('NotoSans-MediumItalic'), url("https://mirostatic.com/app/static/31387059566a3171.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Noto Sans SemiBold'), local('NotoSans-SemiBold'), url("https://mirostatic.com/app/static/526dd53b40975c37.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: local('Noto Sans SemiBold Italic'), local('NotoSans-SemiBoldItalic'), url("https://mirostatic.com/app/static/e73d4fdd87d7e319.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Noto Sans Bold'), local('NotoSans-Bold'), url("https://mirostatic.com/app/static/9f11d6779c14d2bc.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Noto Sans Bold Italic'), local('NotoSans-BoldItalic'), url("https://mirostatic.com/app/static/888e13e017cedc15.woff2") format('woff2');
+}
+]]><![CDATA[@font-face {
+  font-family: 'OpenSans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/800985e1502d12bf.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'OpenSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/d8a7ca42a20caea5.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'OpenSans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/3cc74c1d3919bd5c.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'OpenSans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/f0481285dc248cf0.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'OpenSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/2f5e8dcf6e47bf00.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'OpenSans';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/0e625f45b71a26f1.woff2") format('woff2');
+}
+@font-face {
+  font-family: 'OpenSans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("https://mirostatic.com/app/static/645c27eb7d93eca8.woff2") format('woff2');
+}
+]]><![CDATA[@font-face {
+  font-family: 'Noto Sans Hebrew';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Noto Sans Hebrew Regular'), local('Noto Sans Hebrew-Regular'), url("https://mirostatic.com/app/static/7ebe1dcf0343326c.woff2") format('woff2'), url("https://mirostatic.com/app/static/6c11f037d6968262.woff") format('woff');
+}
+@font-face {
+  font-family: 'Noto Sans Hebrew';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Noto Sans Hebrew Bold'), local('Noto Sans Hebrew-Bold'), url("https://mirostatic.com/app/static/d2883e2f177d0dad.woff2") format('woff2'), url("https://mirostatic.com/app/static/8546991909eadbc9.woff") format('woff');
+}
+]]><![CDATA[@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Noto Sans Japanese Regular'), local('Noto Sans Japanese-Regular'), url("https://mirostatic.com/app/static/9320b3c07ab79383.woff2") format('woff2'), url("https://mirostatic.com/app/static/a43be2cbcfc0b250.woff") format('woff');
+}
+@font-face {
+  font-family: 'Noto Sans JP';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Noto Sans Japanese Bold'), local('Noto Sans Japanese-Bold'), url("https://mirostatic.com/app/static/7ab032c73212439f.woff2") format('woff2'), url("https://mirostatic.com/app/static/29f177f4466bd7a1.woff") format('woff');
+}
+]]><![CDATA[@font-face {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''), url("https://mirostatic.com/app/static/7a5b625774730d22.woff2") format('woff2'), url("https://mirostatic.com/app/static/2d84dc606f1fb88e.woff") format('woff');
+}
+@font-face {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  src: local(''), url("https://mirostatic.com/app/static/fa5a3d9073cdd58f.woff2") format('woff2'), url("https://mirostatic.com/app/static/7ded243557c83342.woff") format('woff');
+}
+]]></style><path id="LineHeadArrow2" d="M-12.727272727272727,-7.545454545454545 L0,0 L-12.727272727272727,7.545454545454545 Z"></path></defs><rect id="svg-board-background-color" width="100%" height="100%" fill="#f2f2f2"></rect><g width="1413.74px" height="1565.32px"  transform="translate(0.64, 0.03) scale(1) rotate(0, 706.87, 782.66)"><svg
+	width="1413.7415844606849"
+	height="1565.318729756053"
+	style="width:1413.7415844606849px; height: 1565.318729756053px;"
+	class="diagram-widget"
+	preserveAspectRatio="none"
+	version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<clipPath id="21147355043">
+		<rect x="0" y="0" width="1413.7415844606849" height="1565.318729756053" rx="0" ry="0"></rect>
+	</clipPath>
+	<g id="Page-1" stroke="none" stroke-width="0" fill="none" fill-rule="evenodd">
+		<rect
+			class="shape-element shape-element-rect"
+			fill="#ffffff"
+			fill-opacity="1"
+			x="0"
+			y="0"
+			width="1413.7415844606849"
+			height="1565.318729756053"
+			rx="0"
+			ry="0"
+			clip-path="url(#21147355043)"
+		></rect>
+	</g>
+	<g transform="translate(0, 0)">
+		<text x="0" y="14" font-size="14"></text>
+	</g>
+</svg>
+</g><g width="180px" height="108px"  transform="translate(374.39, 40.03) scale(1) rotate(0, 90, 54)"><g><g style="stroke: #087429;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #c3faf5;fill-opacity: 1"><rect x="0" y="0" width="180" height="108" rx="8" /></g></g><g><g style="stroke: #087429;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="1.6416015625" y="44" width="144.716796875" textLength="144.716796875" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Clients/API Consumers</text></g></g><g width="220px" height="108px"  transform="translate(354.39, 268.03) scale(1) rotate(0, 110, 54)"><g><g style="stroke: #608520;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #dbfaad;fill-opacity: 1"><rect x="0" y="0" width="220" height="108" rx="8" /></g></g><g><g style="stroke: #608520;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="6.08642578125" y="44" width="175.8271484375" textLength="175.8271484375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >MultiTenant API Host (.NET)</text></g></g><g width="248px" height="108px"  transform="translate(340.39, 500.03) scale(1) rotate(0, 124, 54)"><g><g style="stroke: #595959;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #e7e7e7;fill-opacity: 1"><rect x="0" y="0" width="248" height="108" rx="8" /></g></g><g><g style="stroke: #595959;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="10.91259765625" y="44" width="194.1748046875" textLength="194.1748046875" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Tenant + Partition Routing logic</text></g></g><g width="184px" height="108px"  transform="translate(244.39, 732.03) scale(1) rotate(0, 92, 54)"><g><g style="stroke: #595959;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #e7e7e7;fill-opacity: 1"><rect x="0" y="0" width="184" height="108" rx="8" /></g></g><g><g style="stroke: #595959;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="4.78662109375" y="44" width="142.4267578125" textLength="142.4267578125" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Tenant Main Endpoints</text></g></g><g width="208px" height="108px"  transform="translate(488.39, 892.03) scale(1) rotate(0, 104, 54)"><g><g style="stroke: #595959;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #e7e7e7;fill-opacity: 1"><rect x="0" y="0" width="208" height="108" rx="8" /></g></g><g><g style="stroke: #595959;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="6.27978515625" y="44" width="163.4404296875" textLength="163.4404296875" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Tenant Partition Endpoints</text></g></g><g width="168px" height="108px"  transform="translate(208.39, 1056.03) scale(1) rotate(0, 84, 54)"><g><g style="stroke: #9b4a07;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #f8d3af;fill-opacity: 1"><rect x="0" y="0" width="168" height="108" rx="8" /></g></g><g><g style="stroke: #9b4a07;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="2.6416015625" y="44" width="130.716796875" textLength="130.716796875" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >ServiceControl Stack</text></g></g><g width="144px" height="108px"  transform="translate(64.39, 1286.03) scale(1) rotate(0, 72, 54)"><g><g style="stroke: #9b4a07;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #f8d3af;fill-opacity: 1"><rect x="0" y="0" width="144" height="108" rx="8" /></g></g><g><g style="stroke: #9b4a07;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="15.1484375" y="44" width="81.703125" textLength="81.703125" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >ServicePulse</text></g></g><g width="168px" height="108px"  transform="translate(876.39, 1056.03) scale(1) rotate(0, 84, 54)"><g><g style="stroke: #9b4a07;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #f8d3af;fill-opacity: 1"><rect x="0" y="0" width="168" height="108" rx="8" /></g></g><g><g style="stroke: #9b4a07;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="1.47607421875" y="44" width="133.0478515625" textLength="133.0478515625" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >.NET Aspire AppHost</text></g></g><g width="204px" height="108px"  transform="translate(858.39, 1288.03) scale(1) rotate(0, 102, 54)"><g><g style="stroke: #608520;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #dbfaad;fill-opacity: 1"><rect x="0" y="0" width="204" height="108" rx="8" /></g></g><g><g style="stroke: #608520;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="3.12109375" y="44" width="165.7578125" textLength="165.7578125" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Single Application Process</text></g></g><g width="204px" height="108px"  transform="translate(1170.39, 1288.03) scale(1) rotate(0, 102, 54)"><g><g style="stroke: #6631d7;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #dedaff;fill-opacity: 1"><rect x="0" y="0" width="204" height="108" rx="8" /></g></g><g><g style="stroke: #6631d7;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="5.4658203125" y="44" width="161.068359375" textLength="161.068359375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Operations / Observability</text></g></g><g width="144px" height="108px"  transform="translate(299.02, 1288.03) scale(1) rotate(0, 72, 54)"><g><g style="stroke: #af7e02;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #fff6b6;fill-opacity: 1"><rect x="0" y="0" width="144" height="108" rx="8" /></g></g><g><g style="stroke: #af7e02;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="26.04150390625" y="44" width="59.9169921875" textLength="59.9169921875" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >RavenDB</text></g></g><g width="268px" height="108px"  transform="translate(458.39, 1288.03) scale(1) rotate(0, 134, 54)"><g><g style="stroke: #af7e02;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: #fff6b6;fill-opacity: 1"><rect x="0" y="0" width="268" height="108" rx="8" /></g></g><g><g style="stroke: #af7e02;stroke-width: 2;stroke-opacity: 1;stroke-dasharray: none;stroke-linecap: round;stroke-linejoin: round;fill: transparent;fill-opacity: 0"></g></g><g transform="translate(16, 16)"><text xml:space="preserve" x="8.666015625" y="44" width="218.66796875" textLength="218.66796875" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Arial", Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >SQL Server with Tenant Databases</text></g></g><g width="486.87px" height="186.55px"  transform="translate(269.14, 1253.52) scale(1) rotate(0, 243.435, 93.275)"><svg
+	width="486.8742117532261"
+	height="186.54581583475115"
+	shape-border-width="shape-background"
+	style="width:486.8742117532261px; height: 186.54581583475115px;"
+	class="shape-background"
+	preserveAspectRatio="none"
+	version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<clipPath id="1140219355675">
+		<rect
+			x="0"
+			y="0"
+			width="486.8742117532261"
+			height="186.54581583475115"
+			rx="0"
+			ry="0"
+		></rect>
+	</clipPath>
+	<g id="Page-1" stroke="none" stroke-width="0" fill="none" fill-rule="evenodd">
+		<rect
+			class="shape-element shape-element-rect"
+			stroke="#1a1a1a"
+			stroke-width="4"
+			stroke-dasharray="2 2"
+			stroke-opacity="1"
+			fill="transparent"
+			fill-opacity="0"
+			x="0"
+			y="0"
+			width="486.8742117532261"
+			height="186.54581583475115"
+			rx="0"
+			ry="0"
+			clip-path="url(#1140219355675)"
+		></rect>
+	</g>
+</svg>
+</g><g width="486.87px" height="186.55px"  transform="translate(269.14, 1253.52) rotate(0, 243.435, 93.275)"><g transform="translate(9.327290791737559, 9.327290791737559)"></g></g><g width="70px" height="20px"  transform="translate(467.58, 1406.24) scale(1.2857142857142858) rotate(0, 35, 10)"><svg
+	width="70"
+	height="20"
+	shape-border-width="shape-background"
+	style="width:70px; height: 20px;"
+	class="shape-background"
+	preserveAspectRatio="none"
+	version="1.1"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<clipPath id="252789591538">
+		<rect
+			x="0"
+			y="0"
+			width="70"
+			height="20"
+			rx="0"
+			ry="0"
+		></rect>
+	</clipPath>
+	<g id="Page-1" stroke="none" stroke-width="0" fill="none" fill-rule="evenodd">
+		<rect
+			class="shape-element shape-element-rect"
+			stroke="transparent"
+			stroke-width="0"
+			stroke-dasharray=""
+			stroke-opacity="0"
+			fill="transparent"
+			fill-opacity="0"
+			x="0"
+			y="0"
+			width="70"
+			height="20"
+			rx="0"
+			ry="0"
+			clip-path="url(#252789591538)"
+		></rect>
+	</g>
+</svg>
+</g><g width="90px" height="25.714285714285715px"  transform="translate(467.58, 1406.24) rotate(0, 45, 12.857142857142858)"><g transform="translate(0, 0)"><text xml:space="preserve" x="0" y="18" width="88.39787946428572" textLength="88.39787946428572" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="18" 
+				fill="#b0b0b0" direction="ltr" >Databases</text></g></g><g width="196px" height="110px"  transform="translate(292.39, 946.03) scale(1) rotate(0, 98, 55)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 196 0 L 7.999999999999999 0 Q 0 0 0 8 L 0 99.81818181818181" /> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 110)  rotate(90) "  /> </g><g width="166.46px" height="143.49px"  transform="translate(709.93, 1110.03) scale(1) rotate(0, 83.23, 71.745)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 166.4599953440138 0 L 7.999999999999999 0 Q 0 0 0 8 L 0 133.3102975776265" clip-path="url(#LineHeadMaskM7lFpf)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 143.4921157594447)  rotate(90) "  /> <clipPath id="LineHeadMaskM7lFpf">
+				<path d="M -2 -2 M -2 -2 L 56.07484888319365 -2 L 56.07484888319365 10 L -2 10 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="79" height="20" transform="translate(-22.925151116806347, -10) scale(1) rotate(0)"><text xml:space="preserve" x="0.6150436401367188" y="14" width="77.76991271972656" textLength="77.76991271972656" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Orchestrate</text></g></g><g width="97px" height="160px"  transform="translate(376.39, 1128.03) scale(1) rotate(0, 48.5, 80)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 89 0 Q 97 0 97 8 L 97 149.8181818181818" clip-path="url(#LineHeadMaskNjEPyu)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(97, 160)  rotate(90) "  /> <clipPath id="LineHeadMaskNjEPyu">
+				<path d="M -2 -2 M 67.5 14.409090909090903 L 124.5 14.409090909090903 L 124.5 36.40909090909091 L 67.5 36.40909090909091 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="55" height="20" transform="translate(69.5, 16.409090909090903) scale(1) rotate(0)"><text xml:space="preserve" x="0.354034423828125" y="14" width="54.29193115234375" textLength="54.29193115234375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Connect</text></g></g><g width="0px" height="288px"  transform="translate(592.39, 1000.03) scale(1) rotate(0, 0, 144)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 0 277.8181818181818" clip-path="url(#LineHeadMasktzVgSh)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 288)  rotate(90) "  /> <clipPath id="LineHeadMasktzVgSh">
+				<path d="M -2 -2 M -2 126.9090909090909 L 27.5 126.9090909090909 L 27.5 148.9090909090909 L -2 148.9090909090909 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="55" height="20" transform="translate(-27.5, 128.9090909090909) scale(1) rotate(0)"><text xml:space="preserve" x="0.354034423828125" y="14" width="54.29193115234375" textLength="54.29193115234375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Connect</text></g></g><g width="25.6px" height="124px"  transform="translate(345.42, 1164.03) scale(1) rotate(0, 12.8, 62)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0.1604732624693952 0 L 0.1604732624693952 29.919763368765302 Q 0.1604732624693952 30 0.0802366312346976 30 L 0.0802366312346976 30 Q 0 30 0 30.080236631234698 L 0 86 Q 0 94 8 94 L 17.595603663356542 94 Q 25.595603663356542 94 25.595603663356542 102 L 25.595603663356542 113.81818181818181" clip-path="url(#LineHeadMaskG5IqEP)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(25.595603663356542, 124)  rotate(90) "  /> <clipPath id="LineHeadMaskG5IqEP">
+				<path d="M -2 -2 M -2 57.62665610953448 L 18 57.62665610953448 L 18 79.62665610953448 L -2 79.62665610953448 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="36" height="20" transform="translate(-18, 59.62665610953448) scale(1) rotate(0)"><text xml:space="preserve" x="0.6960220336914062" y="14" width="34.60795593261719" textLength="34.60795593261719" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Store</text></g></g><g width="0px" height="124px"  transform="translate(960.39, 1164.03) scale(1) rotate(0, 0, 62)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 0 113.81818181818181" clip-path="url(#LineHeadMaskqaeHdP)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 124)  rotate(90) "  /> <clipPath id="LineHeadMaskqaeHdP">
+				<path d="M -2 -2 M -2 44.90909090909091 L 39.5 44.90909090909091 L 39.5 66.9090909090909 L -2 66.9090909090909 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="79" height="20" transform="translate(-39.5, 46.90909090909091) scale(1) rotate(0)"><text xml:space="preserve" x="0.6150436401367188" y="14" width="77.76991271972656" textLength="77.76991271972656" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Orchestrate</text></g></g><g width="156px" height="122px"  transform="translate(136.39, 1164.03) scale(1) rotate(0, 78, 61)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 122 L 0 69 Q 0 61 7.999999999999999 61 L 148.00000000000023 61 Q 156.00000000000023 61 156.00000000000023 53 L 156.00000000000023 10.181818181818182" clip-path="url(#LineHeadMaskJRpIRj)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(156.00000000000023, 0)  rotate(-90) "  /> <clipPath id="LineHeadMaskJRpIRj">
+				<path d="M -2 -2 M 43.40909090909102 49 L 100.40909090909102 49 L 100.40909090909102 71 L 43.40909090909102 71 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="55" height="20" transform="translate(45.40909090909102, 51) scale(1) rotate(0)"><text xml:space="preserve" x="0.354034423828125" y="14" width="54.29193115234375" textLength="54.29193115234375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Connect</text></g></g><g width="44px" height="216px"  transform="translate(292.39, 840.03) scale(1) rotate(0, 22, 108)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 44 0 L 44 100 Q 44 108 36 108 L 8 108 Q 0 108 0 116 L 0 205.8181818181818" clip-path="url(#LineHeadMaskywWtsC)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 216)  rotate(90) "  /> <clipPath id="LineHeadMaskywWtsC">
+				<path d="M -2 -2 M -2 67.64854433887467 L 108 67.64854433887467 L 108 89.64854433887467 L -2 89.64854433887467 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="128" height="20" transform="translate(-20, 69.64854433887467) scale(1) rotate(0)"><text xml:space="preserve" x="0.4610595703125" y="14" width="127.077880859375" textLength="127.077880859375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Error/Audit/Metrics</text></g></g><g width="0px" height="284px"  transform="translate(538.64, 608.03) scale(1) rotate(0, 0, 142)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 0 273.8181818181818" clip-path="url(#LineHeadMaskhS9STh)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 284)  rotate(90) "  /> <clipPath id="LineHeadMaskhS9STh">
+				<path d="M -2 -2 M -2 124.9090909090909 L 60 124.9090909090909 L 60 146.9090909090909 L -2 146.9090909090909 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="120" height="20" transform="translate(-60, 126.9090909090909) scale(1) rotate(0)"><text xml:space="preserve" x="0.41605377197265625" y="14" width="119.16789245605469" textLength="119.16789245605469" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Deterministic flow</text></g></g><g width="0px" height="124px"  transform="translate(385.14, 608.03) scale(1) rotate(0, 0, 62)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 0 113.81818181818181" clip-path="url(#LineHeadMask253Be7)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 124)  rotate(90) "  /> <clipPath id="LineHeadMask253Be7">
+				<path d="M -2 -2 M -2 44.90909090909091 L 30.5 44.90909090909091 L 30.5 66.9090909090909 L -2 66.9090909090909 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="61" height="20" transform="translate(-30.5, 46.90909090909091) scale(1) rotate(0)"><text xml:space="preserve" x="0.4490203857421875" y="14" width="60.101959228515625" textLength="60.101959228515625" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Bulk flow</text></g></g><g width="0px" height="124px"  transform="translate(464.39, 376.03) scale(1) rotate(0, 0, 62)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 0 113.81818181818181" clip-path="url(#LineHeadMaskHpEyYF)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 124)  rotate(90) "  /> <clipPath id="LineHeadMaskHpEyYF">
+				<path d="M -2 -2 M -2 44.90909090909091 L 20 44.90909090909091 L 20 66.9090909090909 L -2 66.9090909090909 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="40" height="20" transform="translate(-20, 46.90909090909091) scale(1) rotate(0)"><text xml:space="preserve" x="0.6100234985351562" y="14" width="38.77995300292969" textLength="38.77995300292969" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Route</text></g></g><g width="0px" height="120px"  transform="translate(464.39, 148.03) scale(1) rotate(0, 0, 60)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 0 109.81818181818181" clip-path="url(#LineHeadMask8BeEM0)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(0, 120)  rotate(90) "  /> <clipPath id="LineHeadMask8BeEM0">
+				<path d="M -2 -2 M -2 42.90909090909091 L 27.5 42.90909090909091 L 27.5 64.9090909090909 L -2 64.9090909090909 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="55" height="20" transform="translate(-27.5, 44.90909090909091) scale(1) rotate(0)"><text xml:space="preserve" x="0.354034423828125" y="14" width="54.29193115234375" textLength="54.29193115234375" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Connect</text></g></g><g width="228px" height="178px"  transform="translate(1044.39, 1110.03) scale(1) rotate(0, 114, 89)"><path stroke-linecap="butt" 
+			stroke="#908e8e" stroke-width="2" fill="transparent"
+			d="M 0 0 L 220 0 Q 228 0 228 8 L 228 167.8181818181818" clip-path="url(#LineHeadMaskTCSviv)"/> <use xlink:href="#LineHeadArrow2" fill="#908e8e"
+			 transform="translate(228, 178)  rotate(90) "  /> <clipPath id="LineHeadMaskTCSviv">
+				<path d="M -2 -2 M 156.4090909090909 -2 L 237.4090909090909 -2 L 237.4090909090909 10 L 156.4090909090909 10 M -2 -2 L 1413.74 -2 L 1413.74 1565.32 L -2 1565.32" fill-rule="evenodd" clip-rule="evenodd" />
+			</clipPath><g width="79" height="20" transform="translate(158.4090909090909, -10) scale(1) rotate(0)"><text xml:space="preserve" x="0.6150436401367188" y="14" width="77.76991271972656" textLength="77.76991271972656" lengthAdjust="spacingAndGlyphs" letter-spacing="0" font-family='"Noto Sans", Helvetica, OpenSans, Arial, sans-serif, Noto Sans Hebrew, Noto Sans, Noto Sans JP, Noto Sans KR' font-size="14" 
+				fill="#222428" direction="ltr" >Orchestrate</text></g></g></svg>

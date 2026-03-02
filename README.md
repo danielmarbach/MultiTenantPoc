@@ -21,6 +21,8 @@ Single ASP.NET Core project hosting multiple NServiceBus endpoints in one proces
 
 The PoC runs as a single host process. The API routes requests by tenant and partition into in-process NServiceBus endpoints. Endpoints persist into tenant-isolated SQL databases and report operational telemetry to the ServiceControl stack.
 
+![High-level architecture](./HierarchyAndFlow.svg)
+
 ```mermaid
 flowchart LR
     C[Clients / API Consumers] --> A[Application Layer<br/>ASP.NET Core + Tenant Routing]
@@ -69,6 +71,8 @@ flowchart LR
 ### Host with tenant endpoint topology
 
 Each tenant has a main endpoint plus partition endpoints. Every endpoint has its own queue and writes to the tenant's database.
+
+![Tenant endpoint layering](./TenantLayering.svg)
 
 ```mermaid
 flowchart LR
