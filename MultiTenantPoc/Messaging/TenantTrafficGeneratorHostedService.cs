@@ -50,7 +50,7 @@ public sealed class TenantTrafficGeneratorHostedService(
                 var minDelayMs = Math.Max(100, generatorOptions.MinDelayMs);
                 var maxDelayMs = Math.Max(minDelayMs + 1, generatorOptions.MaxDelayMs);
 
-                if (!generatorOptions.Enabled)
+                if (!IsTrafficGenerationEnabledForTenant(generatorOptions, tenantId))
                 {
                     if (wasEnabled != false)
                     {
@@ -113,5 +113,21 @@ public sealed class TenantTrafficGeneratorHostedService(
         }
 
         logger.LogInformation("Stopped tenant generator loop for {TenantId}", tenantId);
+    }
+
+    static bool IsTrafficGenerationEnabledForTenant(TrafficGeneratorOptions options, string tenantId)
+    {
+        if (!options.Enabled)
+        {
+            return false;
+        }
+
+        var enabledTenantIds = options.EnabledTenantIds;
+        if (enabledTenantIds.Length == 0)
+        {
+            return true;
+        }
+
+        return enabledTenantIds.Contains(tenantId, StringComparer.OrdinalIgnoreCase);
     }
 }
