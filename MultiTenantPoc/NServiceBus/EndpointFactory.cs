@@ -40,10 +40,15 @@ public static class EndpointFactory
         endpointConfiguration.AssemblyScanner().Disable = true;
         addHandlers(endpointConfiguration);
 
-        var transport = endpointConfiguration.UseTransport<SqlServerTransport>();
-        transport.ConnectionString(connectionString);
-        transport.DefaultSchema(defaultSchema);
-        transport.Transactions(ParseMode(transactionMode));
+        var routing = endpointConfiguration.UseTransport(new SqlServerTransport(connectionString)
+        {
+            DefaultSchema = defaultSchema,
+            TransportTransactionMode = ParseMode(transactionMode),
+            QueuePeeker =
+            {
+                Delay = TimeSpan.FromSeconds(5),
+            }
+        });
 
         var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
         persistence.SqlDialect<SqlDialect.MsSqlServer>();
@@ -80,7 +85,6 @@ public static class EndpointFactory
             });
         });
 
-        var routing = transport.Routing();
         foreach (var messageType in routeToSelfMessageTypes)
         {
             routing.RouteToEndpoint(messageType, endpointName);
