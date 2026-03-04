@@ -15,3 +15,11 @@ public sealed record BulkIngestionRequest(string BusinessId, string Payload);
 /// <param name="BusinessId" example="invoice-9917">Business identifier used to derive partition.</param>
 /// <param name="Payload" example="process-order">Payload text for the PoC command.</param>
 public sealed record PartitionedCommandRequest(string BusinessId, string Payload);
+
+/// <summary>
+/// Request payload for starting the partition saga.
+/// </summary>
+/// <example>{"businessId":"invoice-9917","payload":"start-saga"}</example>
+/// <param name="BusinessId" example="invoice-9917">Business identifier used to derive partition.</param>
+/// <param name="Payload" example="start-saga">Payload text for the PoC command.</param>
+public sealed record StartPartitionSagaRequest(string BusinessId, string Payload);

@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InterceptorsNamespaces>$(InterceptorsNamespaces);NServiceBus</InterceptorsNamespaces>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS8785</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +17,7 @@
     <PackageReference Include="NServiceBus.Heartbeat" Version="6.0.0" />
     <PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="6.0.0" />
     <PackageReference Include="NServiceBus.Persistence.Sql" Version="9.0.0" />
+    <PackageReference Include="NServiceBus.SagaAudit" Version="6.0.0" />
     <PackageReference Include="NServiceBus.Transport.SqlServer" Version="9.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
   </ItemGroup>

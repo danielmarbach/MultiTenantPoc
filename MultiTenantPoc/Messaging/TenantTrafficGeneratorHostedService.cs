@@ -74,7 +74,9 @@ public sealed class TenantTrafficGeneratorHostedService(
 
                 var businessId = $"bg-{tenantId}-{Guid.NewGuid():N}";
                 var payload = $"payload-{Random.Shared.Next(1, 10_000)}";
-                var sendBulk = Random.Shared.NextDouble() < 0.5;
+                var random = Random.Shared.NextDouble();
+                var sendBulk = random < 0.4;
+                var sendSaga = random is >= 0.4 and < 0.7;
 
                 if (sendBulk)
                 {
@@ -90,13 +92,27 @@ public sealed class TenantTrafficGeneratorHostedService(
                     endpointCatalog.TryResolvePartitionEndpoint(tenantId, businessId, out var partitionEndpoint, out var partition);
                     var partitionSession = serviceProvider.GetRequiredKeyedService<IMessageSession>(partitionEndpoint);
 
-                    await partitionSession.Send(new PartitionedBusinessCommand
+                    if (sendSaga)
                     {
-                        TenantId = tenantId,
-                        BusinessId = businessId,
-                        Partition = partition,
-                        Payload = payload
-                    }, cancellationToken);
+                        await partitionSession.Send(new StartPartitionSagaCommand
+                        {
+                            CorrelationId = Guid.NewGuid().ToString("N"),
+                            TenantId = tenantId,
+                            BusinessId = businessId,
+                            Partition = partition,
+                            Payload = payload
+                        }, cancellationToken);
+                    }
+                    else
+                    {
+                        await partitionSession.Send(new PartitionedBusinessCommand
+                        {
+                            TenantId = tenantId,
+                            BusinessId = businessId,
+                            Partition = partition,
+                            Payload = payload
+                        }, cancellationToken);
+                    }
                 }
 
                 await Task.Delay(Random.Shared.Next(minDelayMs, maxDelayMs), cancellationToken);

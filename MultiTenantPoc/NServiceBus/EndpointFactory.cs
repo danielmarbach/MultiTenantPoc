@@ -30,6 +30,7 @@ public static class EndpointFactory
         endpointConfiguration.SendHeartbeatTo(heartbeatQueue);
         endpointConfiguration.ReportCustomChecksTo(customChecksQueue, TimeSpan.FromSeconds(10));
         endpointConfiguration.AddCustomCheck<EndpointStartupCustomCheck>();
+        endpointConfiguration.AuditSagaStateChanges(serviceControlQueue: auditQueue);
         var metrics = endpointConfiguration.EnableMetrics();
         metrics.SendMetricDataToServiceControl(metricsQueue, TimeSpan.FromSeconds(20));
         endpointConfiguration.LimitMessageProcessingConcurrencyTo(processingConcurrency);

@@ -77,3 +77,25 @@ public sealed class PartitionedBusinessCommandHandler(ILogger<PartitionedBusines
         }
     }
 }
+
+public sealed class PartitionSagaProbeCommandHandler(ILogger<PartitionSagaProbeCommandHandler> logger)
+    : IHandleMessages<PartitionSagaProbeCommand>
+{
+    public async Task Handle(PartitionSagaProbeCommand message, IMessageHandlerContext context)
+    {
+        logger.LogInformation(
+            "Handled saga probe command for CorrelationId={CorrelationId}, TenantId={TenantId}, BusinessId={BusinessId}, Partition={Partition}",
+            message.CorrelationId,
+            message.TenantId,
+            message.BusinessId,
+            message.Partition);
+
+        await context.Reply(new PartitionSagaProbeReply
+        {
+            CorrelationId = message.CorrelationId,
+            TenantId = message.TenantId,
+            BusinessId = message.BusinessId,
+            Partition = message.Partition
+        });
+    }
+}

@@ -85,8 +85,13 @@ public static class NServiceBusServiceCollectionExtensions
             metricsQueue: options.SqlTransport.MetricsQueue,
             transactionMode: options.SqlTransport.TransactionMode,
             processingConcurrency: 1,
-            addHandlers: cfg => cfg.AddHandler<PartitionedBusinessCommandHandler>(),
-            routeToSelfMessageTypes: [typeof(PartitionedBusinessCommand)]);
+            addHandlers: cfg =>
+            {
+                cfg.AddHandler<PartitionedBusinessCommandHandler>();
+                cfg.AddHandler<PartitionSagaProbeCommandHandler>();
+                cfg.AddSaga<PartitionedEndpointSaga>();
+            },
+            routeToSelfMessageTypes: [typeof(PartitionedBusinessCommand), typeof(StartPartitionSagaCommand)]);
 
         services.AddNServiceBusEndpoint(partitionEndpointConfiguration, partitionEndpoint.EndpointName);
 

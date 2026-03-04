@@ -127,6 +127,49 @@ public static class WebApplicationExtensions
         .WithSummary("Send partitioned business command")
         .AddEndpointFilter<PartitionMessageSessionFilter>();
 
+        tenantApi.MapPost("/saga", async (
+            string tenantId,
+            StartPartitionSagaRequest request,
+            HttpContext httpContext,
+            ILoggerFactory loggerFactory,
+            CancellationToken cancellationToken) =>
+        {
+            var partitionContext = httpContext.GetPartitionContext();
+            var partitionEndpoint = partitionContext.PartitionEndpoint;
+            var partition = partitionContext.Partition;
+
+            var logger = loggerFactory.CreateLogger("Api");
+            using var scope = BeginApiScope(logger, tenantId, request.BusinessId, "saga", partition);
+
+            var correlationId = Guid.NewGuid().ToString("N");
+            await partitionContext.MessageSession.Send(new StartPartitionSagaCommand
+            {
+                CorrelationId = correlationId,
+                TenantId = tenantId,
+                BusinessId = request.BusinessId,
+                Partition = partition,
+                Payload = request.Payload
+            }, cancellationToken);
+
+            logger.LogInformation(
+                "Sent partition saga start command using endpoint {PartitionEndpoint} for tenant {TenantId} with CorrelationId={CorrelationId}",
+                partitionEndpoint,
+                tenantId,
+                correlationId);
+
+            return Results.Accepted($"/api/{tenantId}/saga", new
+            {
+                tenantId,
+                businessId = request.BusinessId,
+                partition,
+                endpoint = partitionEndpoint,
+                correlationId,
+                mode = "local"
+            });
+        })
+        .WithSummary("Start partition saga")
+        .AddEndpointFilter<PartitionMessageSessionFilter>();
+
         tenantApi.MapGet("/persisted", async (
             string tenantId,
             EndpointCatalog catalog,
