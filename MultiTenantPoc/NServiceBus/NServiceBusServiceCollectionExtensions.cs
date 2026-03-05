@@ -41,7 +41,7 @@ public static class NServiceBusServiceCollectionExtensions
             metricsQueue: options.SqlTransport.MetricsQueue,
             transactionMode: options.SqlTransport.TransactionMode,
             processingConcurrency: Math.Max(1, tenant.MainEndpointConcurrency),
-            addHandlers: cfg => cfg.AddHandler<BulkIngestionCommandHandler>(),
+            addHandlers: cfg => cfg.Handlers.MultiTenantPocAssembly.MultiTenantPoc.AddBulkIngestionCommandHandler(),
             routeToSelfMessageTypes: [typeof(BulkIngestionCommand)]);
 
         services.AddNServiceBusEndpoint(mainEndpoint, tenant.TenantId);
@@ -87,8 +87,9 @@ public static class NServiceBusServiceCollectionExtensions
             processingConcurrency: 1,
             addHandlers: cfg =>
             {
-                cfg.AddHandler<PartitionedBusinessCommandHandler>();
-                cfg.AddHandler<PartitionSagaProbeCommandHandler>();
+                var multiTenantPocRegistry = cfg.Handlers.MultiTenantPocAssembly.MultiTenantPoc;
+                multiTenantPocRegistry.AddPartitionedBusinessCommandHandler();
+                multiTenantPocRegistry.AddPartitionSagaProbeCommandHandler();
                 cfg.AddSaga<PartitionedEndpointSaga>();
             },
             routeToSelfMessageTypes: [typeof(PartitionedBusinessCommand), typeof(StartPartitionSagaCommand)]);
