@@ -1,6 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using NServiceBus;
-
 namespace MultiTenantPoc;
 
 public static class NServiceBusServiceCollectionExtensions
@@ -41,7 +38,7 @@ public static class NServiceBusServiceCollectionExtensions
             metricsQueue: options.SqlTransport.MetricsQueue,
             transactionMode: options.SqlTransport.TransactionMode,
             processingConcurrency: Math.Max(1, tenant.MainEndpointConcurrency),
-            addHandlers: cfg => cfg.Handlers.MultiTenantPocAssembly.MultiTenantPoc.AddBulkIngestionCommandHandler(),
+            addHandlers: cfg => cfg.Handlers.Current.MultiTenantPoc.AddBulkIngestionCommandHandler(),
             routeToSelfMessageTypes: [typeof(BulkIngestionCommand)]);
 
         services.AddNServiceBusEndpoint(mainEndpoint, tenant.TenantId);
@@ -87,7 +84,7 @@ public static class NServiceBusServiceCollectionExtensions
             processingConcurrency: 1,
             addHandlers: cfg =>
             {
-                var multiTenantPocRegistry = cfg.Handlers.MultiTenantPocAssembly.MultiTenantPoc;
+                var multiTenantPocRegistry = cfg.Handlers.Current.MultiTenantPoc;
                 multiTenantPocRegistry.AddPartitionedBusinessCommandHandler();
                 multiTenantPocRegistry.AddPartitionSagaProbeCommandHandler();
                 multiTenantPocRegistry.AddPartitionedEndpointSaga();
