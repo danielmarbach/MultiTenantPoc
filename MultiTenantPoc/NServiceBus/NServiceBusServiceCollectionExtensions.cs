@@ -90,7 +90,7 @@ public static class NServiceBusServiceCollectionExtensions
                 var multiTenantPocRegistry = cfg.Handlers.MultiTenantPocAssembly.MultiTenantPoc;
                 multiTenantPocRegistry.AddPartitionedBusinessCommandHandler();
                 multiTenantPocRegistry.AddPartitionSagaProbeCommandHandler();
-                cfg.AddSaga<PartitionedEndpointSaga>();
+                multiTenantPocRegistry.AddPartitionedEndpointSaga();
             },
             routeToSelfMessageTypes: [typeof(PartitionedBusinessCommand), typeof(StartPartitionSagaCommand)]);
 
