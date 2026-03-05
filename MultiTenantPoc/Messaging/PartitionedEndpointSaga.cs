@@ -1,5 +1,6 @@
 namespace MultiTenantPoc;
 
+[Saga]
 public class PartitionedEndpointSaga(ILogger<PartitionedEndpointSaga> logger) : Saga<PartitionedEndpointSagaData>,
     IAmStartedByMessages<StartPartitionSagaCommand>,
     IHandleMessages<PartitionSagaProbeReply>,

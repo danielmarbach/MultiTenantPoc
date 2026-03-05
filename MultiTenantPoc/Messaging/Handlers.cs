@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 
 namespace MultiTenantPoc;
 
+[Handler]
 public sealed class BulkIngestionCommandHandler(ILogger<BulkIngestionCommandHandler> logger, PocDbContext dbContext)
     : IHandleMessages<BulkIngestionCommand>
 {
@@ -36,6 +37,7 @@ public sealed class BulkIngestionCommandHandler(ILogger<BulkIngestionCommandHand
     }
 }
 
+[Handler]
 public sealed class PartitionedBusinessCommandHandler(ILogger<PartitionedBusinessCommandHandler> logger, PocDbContext dbContext)
     : IHandleMessages<PartitionedBusinessCommand>
 {
@@ -78,6 +80,7 @@ public sealed class PartitionedBusinessCommandHandler(ILogger<PartitionedBusines
     }
 }
 
+[Handler]
 public sealed class PartitionSagaProbeCommandHandler(ILogger<PartitionSagaProbeCommandHandler> logger)
     : IHandleMessages<PartitionSagaProbeCommand>
 {
